@@ -1,12 +1,12 @@
 CREATE TABLE `customer` (
-  `cutomer_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL AUTO_INCREMENT,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `username` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
   `email` varchar(254) NOT NULL,
-  PRIMARY KEY (`cutomer_id`),
-  UNIQUE KEY `cutomer_id_UNIQUE` (`cutomer_id`),
+  PRIMARY KEY (`customer_id`),
+  UNIQUE KEY `customer_id_UNIQUE` (`customer_id`),
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `email_UNIQUE` (`email`)
 );
@@ -34,6 +34,6 @@ CREATE TABLE `booking` (
   PRIMARY KEY (`car_id`,`customer_id`,`start_datetime`),
   KEY `customer_id_idx` (`customer_id`),
   CONSTRAINT `car_id` FOREIGN KEY (`car_id`) REFERENCES `car` (`car_id`),
-  CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`cutomer_id`)
+  CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
 )
 
