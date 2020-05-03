@@ -1,13 +1,23 @@
 {% extends 'bootstrap/base.html' %}
 
+{% macro format_input(input) %}
+<div>
+    {{ input.label }}<br>
+    {{ input(size=32) }}<br>
+    {% for error in input.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</div>
+{% endmacro %}
+
 {% block head %}
     {{ super() }}
-        <style>
-            #content
-            {
-                padding-left : 15px;
-            }
-        </style>
+    <style>
+        #content
+        {
+            padding-left : 15px;
+        }
+    </style>
 {% endblock %}
 
 {% block navbar %}
