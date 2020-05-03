@@ -40,7 +40,7 @@ class CustomerSchema(ma.Schema):
 customerSchema = CustomerSchema()
 customersSchema = CustomerSchema(many = True)
 
-# Endpoint to show all people.
+# Endpoint to show all customers.
 @api.route("/customers", methods = ["GET"])
 def getCustomers():
     customers = Customer.query.all()
@@ -48,13 +48,13 @@ def getCustomers():
 
     return jsonify(result)
 
-# Endpoint to get person by id.
+# Endpoint to get customer by id.
 @api.route("/customer/<id>", methods = ["GET"])
 def getCustomer(id):
     customer = Customer.query.get(id)
     return customerSchema.jsonify(customer)
 
-# Endpoint to create new person.
+# Endpoint to create new customer.
 @api.route("/customer", methods = ["POST"])
 def addCustomer():
     newCustomer = Customer(
