@@ -1,0 +1,33 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block head %}
+    {{ super() }}
+        <style>
+            #content
+            {
+                padding-left : 15px;
+            }
+        </style>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">pIoT</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div id="content">
+    <!-- have a look at this -->
+{% block content_container %} {% endblock %}
+</div>
+{% endblock %}
