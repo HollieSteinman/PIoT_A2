@@ -40,6 +40,41 @@ class CustomerSchema(ma.Schema):
 customerSchema = CustomerSchema()
 customersSchema = CustomerSchema(many = True)
 
+class Car(db.Model):
+    __tablename__ = "car"
+    car_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    status = db.Column(db.Text)
+    make = db.Column(db.Text)
+    model = db.Column(db.Text, unique = True)
+    body_type = db.Column(db.Text)
+    colour = db.Column(db.Text)
+    seats = db.Column(db.Integer)
+    location = db.Column(db.Text)
+    cost_per_hour = db.Column(db.Float)
+
+    def __init__(self, status, make, model, body_type, colour, seats, location, cost_per_hour, car_id=None):
+        self.car_id = car_id
+        self.status = status
+        self.make = make
+        self.model = model
+        self.body_type = body_type
+        self.colour = colour
+        self.seats = seats
+        self.location = location
+        self.cost_per_hour = cost_per_hour
+
+class CarSchema(ma.Schema):
+    # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
+    def __init__(self, strict = True, **kwargs):
+        super().__init__(**kwargs)
+    
+    class Meta:
+        # Fields to expose.
+        fields = ("car_id", "status", "make", "model", "body_type", "colour", "seats", "location", "cost_per_hour")
+
+carSchema = CarSchema()
+carsSchema = CarSchema(many = True)
+
 # Endpoint to show all customers.
 @api.route("/customers", methods = ["GET"])
 def getCustomers():
