@@ -79,7 +79,7 @@ class Booking(db.Model):
     __tablename__ = "booking"
     car_id = db.Column(db.Integer, primary_key = True)
     customer_id = db.Column(db.Integer, primary_key = True)
-    start_datetime = db.Column(db.DateTime)
+    start_datetime = db.Column(db.DateTime, primary_key = True)
     end_datetime = db.Column(db.DateTime)
     status = db.Column(db.Text)
 
