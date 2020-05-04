@@ -75,6 +75,33 @@ class CarSchema(ma.Schema):
 carSchema = CarSchema()
 carsSchema = CarSchema(many = True)
 
+class Booking(db.Model):
+    __tablename__ = "booking"
+    car_id = db.Column(db.Integer, primary_key = True)
+    customer_id = db.Column(db.Integer, primary_key = True)
+    start_datetime = db.Column(db.DateTime)
+    end_datetime = db.Column(db.DateTime)
+    status = db.Column(db.Text)
+
+    def __init__(self, car_id, customer_id, start_datetime, end_datetime, status):
+        self.car_id = car_id
+        self.customer_id = customer_id
+        self.start_datetime = start_datetime
+        self.end_datetime = end_datetime
+        self.status = status
+
+class BookingSchema(ma.Schema):
+    # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
+    def __init__(self, strict = True, **kwargs):
+        super().__init__(**kwargs)
+    
+    class Meta:
+        # Fields to expose.
+        fields = ("car_id", "customer_id", "start_datetime", "end_datetime", "status")
+
+bookingSchema = BookingSchema()
+bookingsSchema = BookingSchema(many = True)
+
 # Endpoint to show all customers.
 @api.route("/customers", methods = ["GET"])
 def getCustomers():
