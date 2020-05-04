@@ -45,7 +45,7 @@ class Car(db.Model):
     car_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     status = db.Column(db.Text)
     make = db.Column(db.Text)
-    model = db.Column(db.Text, unique = True)
+    model = db.Column(db.Text)
     body_type = db.Column(db.Text)
     colour = db.Column(db.Text)
     seats = db.Column(db.Integer)
