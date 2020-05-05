@@ -1,0 +1,7 @@
+# Project Files
+.idea/
+
+# Program Data
+src/data/faces/
+src/data/ids.csv
+src/data/trainer.yml
