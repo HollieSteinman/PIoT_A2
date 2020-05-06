@@ -116,6 +116,12 @@ def getCustomer(id):
     customer = Customer.query.get(id)
     return customerSchema.jsonify(customer)
 
+# Endpoint to get customer by username.
+@api.route("/customer/username/<username>", methods = ["GET"])
+def getCustomerByUsername(username):
+    customer = Customer.query.filter_by(username=username).first()
+    return customerSchema.jsonify(customer)
+
 # Endpoint to create new customer.
 @api.route("/customer", methods = ["POST"])
 def addCustomer():
