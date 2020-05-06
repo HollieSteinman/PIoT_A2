@@ -111,7 +111,7 @@ def getCustomers():
     return jsonify(result)
 
 # Endpoint to get customer by id.
-@api.route("/customer/<id>", methods = ["GET"])
+@api.route("/customer/<int:id>", methods = ["GET"])
 def getCustomer(id):
     customer = Customer.query.get(id)
     return customerSchema.jsonify(customer)
@@ -129,6 +129,20 @@ def addCustomer():
     db.session.commit()
 
     return customerSchema.jsonify(newCustomer)
+
+# Endpoint to get all cars
+@api.route("/cars", methods = ["GET"])
+def getCars():
+    cars = Car.query.all()
+    result = carsSchema.dump(cars)
+
+    return jsonify(result)
+
+# Endpoint to get car by id.
+@api.route("/car/<int:id>", methods = ["GET"])
+def getCar(id):
+    car = Car.query.get(id)
+    return carSchema.jsonify(car)
 
 # Endpoint to update person.
 @api.route("/person/<id>", methods = ["PUT"])
