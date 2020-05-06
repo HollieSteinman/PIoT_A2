@@ -144,6 +144,14 @@ def getCar(id):
     car = Car.query.get(id)
     return carSchema.jsonify(car)
 
+# Endpoint to get cars by status
+@api.route("/cars/status/<status>", methods = ["GET"])
+def getCarsByStatus(status):
+    cars = Car.query.filter_by(status=status).all()
+    result = carsSchema.dump(cars)
+
+    return jsonify(result)
+
 # Endpoint to update person.
 @api.route("/person/<id>", methods = ["PUT"])
 def personUpdate(id):
