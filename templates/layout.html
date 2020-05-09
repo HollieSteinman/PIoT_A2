@@ -1,5 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
+{% block html_attribs %} lang="en" {% endblock %}
+
 {% macro format_input(input) %}
 <div>
     {{ input.label }}<br>
