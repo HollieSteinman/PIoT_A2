@@ -3,21 +3,30 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os, requests, json
 from forms import LoginForm, RegisterForm
+from flask_login import login_user, logout_user, login_required
+from flask_api import Customer
 
 site = Blueprint("site", __name__)
 
 # Client webpage.
 @site.route("/")
+@login_required
 def index():
-    return render_template("index.html", data={"name":"Moose"})
+    return render_template("index.html")
 
 @site.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        print("Username: {}, Password: {}".format(form.username.data, form.password.data))
+        login_user(Customer.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
         return redirect("/")
     return render_template("login.html", form=form)
+
+@site.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/login")
 
 @site.route("/register", methods=["GET", "POST"])
 def register():
@@ -25,7 +34,5 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         requests.post("http://127.0.0.1:5000/customer", request.form)
-        # print("First Name: {}, Last Name: {}, Username: {}, Password: {}, Email: {}".format(form.first_name.data, 
-        #     form.last_name.data, form.username.data, form.password.data, form.email.data))
         return redirect("/")
     return render_template("register.html", form=form)

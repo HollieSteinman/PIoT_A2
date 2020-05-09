@@ -4,6 +4,7 @@ from flask_marshmallow import Marshmallow
 import os, requests, json
 from flask import current_app as app
 from passlib.hash import sha256_crypt
+from flask_login import UserMixin
 
 api = Blueprint("api", __name__)
 
@@ -11,7 +12,7 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 # Declaring the model.
-class Customer(db.Model):
+class Customer(UserMixin, db.Model):
     __tablename__ = "customer"
     customer_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     first_name = db.Column(db.Text)
@@ -19,6 +20,9 @@ class Customer(db.Model):
     username = db.Column(db.Text, unique = True)
     password = db.Column(db.Text)
     email = db.Column(db.Text)
+
+    def get_id(self):
+        return self.customer_id
 
     def __init__(self, first_name, last_name, username, password, email, customer_id=None):
         self.customer_id = customer_id

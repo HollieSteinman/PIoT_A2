@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
-{% block title %} Person {% endblock %}
+{% block title %} Home {% endblock %}
 
 {% block padded_content %}
-<h1>Welcome {{ data["name"] }}</h1>
+<h1>Welcome {{ current_user.username }}</h1>
 {% endblock %}

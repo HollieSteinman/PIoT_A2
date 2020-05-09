@@ -1,13 +1,14 @@
 # pip3 install flask flask_sqlalchemy flask_marshmallow marshmallow-sqlalchemy
 # python3 flask_main.py
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os, requests, json
-from flask_api import api, db
+from flask_api import api, db, Customer
 from flask_site import site
 from flask_bootstrap import Bootstrap
 from config import Config
+from flask_login import LoginManager
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -23,6 +24,17 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://{}:{}@{}/{}".format(USER, PASSW
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 db.init_app(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Customer.query.get(user_id)
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect("/login")
 
 app.register_blueprint(api)
 app.register_blueprint(site)
