@@ -19,7 +19,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         login_user(Customer.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
-        return redirect("/")
+        return redirect(request.args.get('next') or "/")
     return render_template("login.html", form=form)
 
 @site.route("/logout")
