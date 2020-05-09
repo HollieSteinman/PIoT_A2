@@ -29,45 +29,43 @@
     </style>
 {% endblock %}
 
+{% macro generate_navitems() %}
+    {% for name, address in kwargs.items() %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ address }}">{{ name }}</a>
+        </li>
+    {% endfor %}
+{% endmacro%}
+
 {% macro logged_out_navbar() %}
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">pIoT</a>
-        </div>
-        <ul class="nav navbar-nav">
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-        </ul>
-    </div>
-</nav>
+    {{ generate_navitems(Login="/login", Register="/register") }}
 {% endmacro %}
 
 {% macro logged_in_navbar() %}
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">pIoT</a>
-        </div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="/logout">Logout</a></li>
+    {{ generate_navitems(Home="/", Logout="/logout") }}
+{% endmacro %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">pIoT</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if current_user.is_authenticated %}
+                {{ logged_in_navbar() }}
+            {% else %}
+                {{ logged_out_navbar() }}
+            {% endif %}
         </ul>
     </div>
 </nav>
-{% endmacro %}
-
-
-{% block navbar %}
-    {% if current_user.is_authenticated %}
-        {{ logged_in_navbar() }}
-    {% else %}
-        {{ logged_out_navbar() }}
-    {% endif %}
 {% endblock %}
 
 {% block content %}
-<div id="content">
-{% block padded_content %} {% endblock %}
-</div>
+    <div id="content">
+        {% block padded_content %}
+        {% endblock %}
+    </div>
 {% endblock %}
