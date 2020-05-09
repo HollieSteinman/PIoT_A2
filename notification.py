@@ -1,29 +1,44 @@
 import os, requests, json, string, bluetooth
 
-nearby_devices = bluetooth.discover_devices(lookup_names = True)
+class Notification():
+     nearby_devices = bluetooth.discover_devices(lookup_names = True)
 
-def discoverDevices():
-     print("found %d device(s)" % len(nearby_devices))
+     def discoverDevices(self):
+          print("found %d device(s)" % len(self.nearby_devices))
 
-     for name, addr in nearby_devices:
-          print (" %s - %s" % (addr, name))
-
-
-# named raspberry pi for testing 
-# replace name with master pi
-
-def masterPiFound():
-     found = False
-
-     for addr, name in nearby_devices:
-          if(name == 'Matthies\’s iPhone' or 'raspberrypi'):
-               found = True
-
-     return found
-
-def sendNotification():
-     if(masterPiFound()):
-          print("Car Unlocked")
+          for name, addr in self.nearby_devices:
+               print (" %s - %s" % (addr, name))
 
 
-sendNotification()
+     #    named raspberry pi and Matthies iPhone for testing 
+     #    replace name with master pi name later
+
+     def masterPiFound(self):
+          found = False
+
+          for addr, name in self.nearby_devices:
+               if(name == 'Matthies\’s iPhone' or 'raspberrypi'):
+                    found = True
+                    break
+
+          return found
+
+     #    print unlock notification
+
+     def carUnlockedNotification(self):
+          if(self.masterPiFound()):
+               print("Car Unlocked")
+
+     #    print locked notification
+     
+     def carLockedNotification(self):
+          if(self.masterPiFound()):
+               print("Car Locked")
+
+# TESTING AREA
+
+notification = Notification()
+
+notification.discoverDevices()
+notification.carUnlockedNotification()
+notification.carLockedNotification()
