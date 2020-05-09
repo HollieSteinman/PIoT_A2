@@ -33,6 +33,6 @@ def register():
     # Use REST API.
     form = RegisterForm()
     if form.validate_on_submit():
-        requests.post("http://127.0.0.1:5000/customer", request.form)
+        requests.post("http://127.0.0.1:5000/api/customer", request.form)
         return redirect("/")
     return render_template("register.html", form=form)

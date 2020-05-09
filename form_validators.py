@@ -5,7 +5,7 @@ from passlib.hash import sha256_crypt
 
 def unique_username(form, field):
     # check if username does not exist in database
-    customer = requests.get("http://127.0.0.1:5000/customer/username/" + field.data).json()
+    customer = requests.get("http://127.0.0.1:5000/api/customer/username/" + field.data).json()
     if customer:
         raise ValidationError("Username already taken")
 

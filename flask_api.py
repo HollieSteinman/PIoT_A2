@@ -107,7 +107,7 @@ bookingSchema = BookingSchema()
 bookingsSchema = BookingSchema(many = True)
 
 # Endpoint to show all customers.
-@api.route("/customers", methods = ["GET"])
+@api.route("/api/customers", methods = ["GET"])
 def getCustomers():
     customers = Customer.query.all()
     result = customersSchema.dump(customers)
@@ -115,19 +115,19 @@ def getCustomers():
     return jsonify(result)
 
 # Endpoint to get customer by id.
-@api.route("/customer/<int:id>", methods = ["GET"])
+@api.route("/api/customer/<int:id>", methods = ["GET"])
 def getCustomer(id):
     customer = Customer.query.get(id)
     return customerSchema.jsonify(customer)
 
 # Endpoint to get customer by username.
-@api.route("/customer/username/<username>", methods = ["GET"])
+@api.route("/api/customer/username/<username>", methods = ["GET"])
 def getCustomerByUsername(username):
     customer = Customer.query.filter_by(username=username).first()
     return customerSchema.jsonify(customer)
 
 # Endpoint to create new customer.
-@api.route("/customer", methods = ["POST"])
+@api.route("/api/customer", methods = ["POST"])
 def addCustomer():
     newCustomer = Customer(
         first_name=request.form["first_name"],
@@ -141,7 +141,7 @@ def addCustomer():
     return customerSchema.jsonify(newCustomer)
 
 # Endpoint to get all cars
-@api.route("/cars", methods = ["GET"])
+@api.route("/api/cars", methods = ["GET"])
 def getCars():
     cars = Car.query.all()
     result = carsSchema.dump(cars)
@@ -149,13 +149,13 @@ def getCars():
     return jsonify(result)
 
 # Endpoint to get car by id.
-@api.route("/car/<int:id>", methods = ["GET"])
+@api.route("/api/car/<int:id>", methods = ["GET"])
 def getCar(id):
     car = Car.query.get(id)
     return carSchema.jsonify(car)
 
 # Endpoint to get cars by status
-@api.route("/cars/status/<status>", methods = ["GET"])
+@api.route("/api/cars/status/<status>", methods = ["GET"])
 def getCarsByStatus(status):
     cars = Car.query.filter_by(status=status).all()
     result = carsSchema.dump(cars)
