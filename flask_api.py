@@ -20,7 +20,7 @@ def checkFieldsExist(form, *args):
         message = ""
         for field in missing:
             message = message + field + ", "
-        raise NameError("Form missing values for " + message)
+        raise NameError("Form missing values for {}".format(message))
 
 # Declaring the model.
 class Customer(UserMixin, db.Model):
@@ -140,12 +140,14 @@ def getCustomerByUsername(username):
 # Endpoint to create new customer.
 @api.route("/api/customer", methods = ["POST"])
 def addCustomer():
+    form = request.form
+    checkFieldsExist(form, "first_name", "last_name", "username", "password", "email")
     newCustomer = Customer(
-        first_name=request.form["first_name"],
-        last_name=request.form["last_name"],
-        username=request.form["username"],
-        password=sha256_crypt.using(rounds = 1000).hash(request.form["password"]),
-        email=request.form["email"])
+        first_name=form["first_name"],
+        last_name=form["last_name"],
+        username=form["username"],
+        password=sha256_crypt.using(rounds = 1000).hash(form["password"]),
+        email=form["email"])
     db.session.add(newCustomer)
     db.session.commit()
 
@@ -213,12 +215,13 @@ def getCustomersCancelledBookings(customer_id):
 # Endpoint to book a car
 @api.route("/api/booking", methods = ["POST"])
 def addBooking():
-    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime", "end_datetime")
+    form = request.form
+    checkFieldsExist(form, "car_id", "customer_id", "start_datetime", "end_datetime")
     newBooking = Booking(
-        car_id=request.form["car_id"],
-        customer_id=request.form["customer_id"],
-        start_datetime=request.form["start_datetime"],
-        end_datetime=request.form["end_datetime"],
+        car_id=form["car_id"],
+        customer_id=form["customer_id"],
+        start_datetime=form["start_datetime"],
+        end_datetime=form["end_datetime"],
         status="active")
     
     car = Car.query.get(request.form["car_id"])
@@ -249,13 +252,13 @@ def setBookingStatus(car_id, customer_id, start_datetime, status):
 # Endpoint to update booking status to cancelled
 @api.route("/api/booking/status/cancelled", methods = ["PUT"])
 def setBookingStatusCancelled():
-    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime")
     form = request.form
+    checkFieldsExist(form, "car_id", "customer_id", "start_datetime")
     return setBookingStatus(form["car_id"], form["customer_id"], form["start_datetime"], "cancelled")
 
 # Endpoint to update booking status to complete
 @api.route("/api/booking/status/complete", methods = ["PUT"])
 def setBookingStatusComplete():
-    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime")
     form = request.form
+    checkFieldsExist(form, "car_id", "customer_id", "start_datetime")
     return setBookingStatus(form["car_id"], form["customer_id"], form["start_datetime"], "complete")
