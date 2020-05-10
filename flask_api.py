@@ -14,12 +14,12 @@ ma = Marshmallow()
 # Declaring the model.
 class Customer(UserMixin, db.Model):
     __tablename__ = "customer"
-    customer_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    first_name = db.Column(db.Text)
-    last_name = db.Column(db.Text)
-    username = db.Column(db.Text, unique = True)
-    password = db.Column(db.Text)
-    email = db.Column(db.Text)
+    customer_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
+    first_name = db.Column(db.Text, nullable=False)
+    last_name = db.Column(db.Text, nullable=False)
+    username = db.Column(db.Text, unique = True, nullable=False)
+    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text, unique = True, nullable=False)
 
     def get_id(self):
         return self.customer_id
@@ -46,15 +46,15 @@ customersSchema = CustomerSchema(many = True)
 
 class Car(db.Model):
     __tablename__ = "car"
-    car_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    status = db.Column(db.Text)
-    make = db.Column(db.Text)
-    model = db.Column(db.Text)
-    body_type = db.Column(db.Text)
-    colour = db.Column(db.Text)
-    seats = db.Column(db.Integer)
-    location = db.Column(db.Text)
-    cost_per_hour = db.Column(db.Float)
+    car_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
+    status = db.Column(db.Text, nullable=False)
+    make = db.Column(db.Text, nullable=False)
+    model = db.Column(db.Text, nullable=False)
+    body_type = db.Column(db.Text, nullable=False)
+    colour = db.Column(db.Text, nullable=False)
+    seats = db.Column(db.Integer, nullable=False)
+    location = db.Column(db.Text, nullable=False)
+    cost_per_hour = db.Column(db.Float, nullable=False)
 
     def __init__(self, status, make, model, body_type, colour, seats, location, cost_per_hour, car_id=None):
         self.car_id = car_id
@@ -81,11 +81,11 @@ carsSchema = CarSchema(many = True)
 
 class Booking(db.Model):
     __tablename__ = "booking"
-    car_id = db.Column(db.Integer, primary_key = True)
-    customer_id = db.Column(db.Integer, primary_key = True)
-    start_datetime = db.Column(db.DateTime, primary_key = True)
-    end_datetime = db.Column(db.DateTime)
-    status = db.Column(db.Text)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.car_id'), primary_key = True, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), primary_key = True, nullable=False)
+    start_datetime = db.Column(db.DateTime, primary_key = True, nullable=False)
+    end_datetime = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Text, nullable=False)
 
     def __init__(self, car_id, customer_id, start_datetime, end_datetime, status):
         self.car_id = car_id
