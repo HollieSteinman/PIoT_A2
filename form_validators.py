@@ -9,6 +9,11 @@ def unique_username(form, field):
     if customer:
         raise ValidationError("Username already taken")
 
+def unique_email(form, field):
+    customer = requests.get("http://127.0.0.1:5000/api/customer/email/" + field.data).json()
+    if customer:
+        raise ValidationError("Eamil used by another account")
+
 def login_details_correct(form, field):
     if form.username.data and form.password.data:
         message = "Username or Password incorrect" 
