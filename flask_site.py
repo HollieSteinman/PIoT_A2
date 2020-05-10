@@ -62,11 +62,13 @@ def booking(car_id):
     else:
         return redirect("/cars")
 
-@site.route("/bookings")
+@site.route("/bookings", methods=["GET", "POST"])
 @login_required
 def bookings():
-    activeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/{}".format(current_user.customer_id, "active")).text)
-    completeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/{}".format(current_user.customer_id, "complete")).text)
-    cancelledBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/{}".format(current_user.customer_id, "cancelled")).text)
+    if request.method == "POST":
+        requests.put("http://127.0.0.1:5000/api/booking/status/cancelled", data=request.form)
+    activeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/active".format(current_user.customer_id)).text)
+    completeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/complete".format(current_user.customer_id)).text)
+    cancelledBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/cancelled".format(current_user.customer_id)).text)
 
     return render_template("bookings.html", activeBookings = activeBookings, completeBookings = completeBookings, cancelledBookings = cancelledBookings)

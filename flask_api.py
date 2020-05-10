@@ -11,10 +11,16 @@ api = Blueprint("api", __name__)
 db = SQLAlchemy()
 ma = Marshmallow()
 
-def checkFields(form, *args):
+def checkFieldsExist(form, *args):
+    missing = []
     for arg in args:
-        if not arg in form:
-            raise NameError("Field missing values")
+        if arg not in form:
+            missing.append(arg)
+    if missing:
+        message = ""
+        for field in missing:
+            message = message + field + ", "
+        raise NameError("Form missing values for " + message)
 
 # Declaring the model.
 class Customer(UserMixin, db.Model):
@@ -183,18 +189,31 @@ def getBookingsByCustomer(customer_id):
 
     return jsonify(result)
 
-# Endpoint to get bookings by customer and status
-@api.route("/api/bookings/customer/<int:customer_id>/status/<status>", methods = ["GET"])
 def getBookingsByCustomerAndStatus(customer_id, status):
     bookings = Booking.query.filter_by(customer_id=customer_id, status=status).all()
     result = bookingsSchema.dump(bookings)
 
     return jsonify(result)
 
-# Endpoint to get bookings by customer and status
+# Endpoint to get a customer's active bookings
+@api.route("/api/bookings/customer/<int:customer_id>/status/active", methods = ["GET"])
+def getCustomersActiveBookings(customer_id):
+    return getBookingsByCustomerAndStatus(customer_id, "active")
+
+# Endpoint to get a customer's complete bookings
+@api.route("/api/bookings/customer/<int:customer_id>/status/complete", methods = ["GET"])
+def getCustomersCompleteBookings(customer_id):
+    return getBookingsByCustomerAndStatus(customer_id, "complete")
+
+# Endpoint to get a customer's cancelled bookings
+@api.route("/api/bookings/customer/<int:customer_id>/status/cancelled", methods = ["GET"])
+def getCustomersCancelledBookings(customer_id):
+    return getBookingsByCustomerAndStatus(customer_id, "cancelled")
+
+# Endpoint to book a car
 @api.route("/api/booking", methods = ["POST"])
 def addBooking():
-    checkFields(request.form, "car_id", "customer_id", "start_datetime", "end_datetime")
+    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime", "end_datetime")
     newBooking = Booking(
         car_id=request.form["car_id"],
         customer_id=request.form["customer_id"],
@@ -209,3 +228,34 @@ def addBooking():
     db.session.commit()
 
     return bookingSchema.jsonify(newBooking)
+
+def setBookingStatus(car_id, customer_id, start_datetime, status):
+    booking = Booking.query.filter_by(
+        car_id=car_id, 
+        customer_id=customer_id, 
+        start_datetime=start_datetime).first()
+    booking.status = status
+
+    car = Car.query.get(car_id)
+    if status != "active":
+        car.status = "available"
+    else:
+        car.status = "unavailable"
+
+    db.session.commit()
+
+    return bookingSchema.jsonify(booking)
+
+# Endpoint to update booking status to cancelled
+@api.route("/api/booking/status/cancelled", methods = ["PUT"])
+def setBookingStatusCancelled():
+    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime")
+    form = request.form
+    return setBookingStatus(form["car_id"], form["customer_id"], form["start_datetime"], "cancelled")
+
+# Endpoint to update booking status to complete
+@api.route("/api/booking/status/complete", methods = ["PUT"])
+def setBookingStatusComplete():
+    checkFieldsExist(request.form, "car_id", "customer_id", "start_datetime")
+    form = request.form
+    return setBookingStatus(form["car_id"], form["customer_id"], form["start_datetime"], "complete")

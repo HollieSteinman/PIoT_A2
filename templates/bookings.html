@@ -6,6 +6,18 @@
     <td>{{ booking.start_datetime }}</td>
     <td>{{ booking.end_datetime }}</td>
     <td>{{ booking.status }}</td>
+    {% if booking.status == "active" %}
+        <td>
+            <form method="POST">
+                <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+                <input type="hidden" name="car_id" value="{{ booking.car_id }}">
+                <input type="hidden" name="start_datetime" value="{{ booking.start_datetime }}">
+                <input type="submit" class="btn btn-dark" value="Cancel Booking">
+            </form>
+        </td>
+    {% else%}
+        <td></td>
+    {% endif %}
 </tr>
 {% endmacro %}
 
