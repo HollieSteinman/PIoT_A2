@@ -60,5 +60,4 @@ def train():
     recogniser.save("src/data/trainer.yml")
 
 
-train()
 

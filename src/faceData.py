@@ -31,65 +31,66 @@ def saveIDs(ids):
         csvWriter.writerow(ids)
 
 
-ids, currentID = loadIDs()
+def gatherData():
+    ids, currentID = loadIDs()
 
-# Directory for the pictures being taken
-user_dir = os.path.join(BASE_DIR,
-                        "data/faces/" + str(currentID) + "/")
-os.mkdir(user_dir)
+    # Directory for the pictures being taken
+    user_dir = os.path.join(BASE_DIR,
+                            "data/faces/" + str(currentID) + "/")
+    os.mkdir(user_dir)
 
-# Uses default device camera
-cap = cv2.VideoCapture(0)
+    # Uses default device camera
+    cap = cv2.VideoCapture(0)
 
-# Count for each image file
-count = 0
-while (True):
-    ret, frame = cap.read()
+    # Count for each image file
+    count = 0
+    while True:
+        ret, frame = cap.read()
 
-    # Turns the camera's input to grey - easier for cv2 to analyse
-    grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Turns the camera's input to grey - easier for cv2 to analyse
+        grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Finds faces according to the cascade
-    minW = 0.1 * cap.get(3)
-    minH = 0.1 * cap.get(4)
-    faces = faceCascade.detectMultiScale(
-        grey,
-        scaleFactor=1.2,
-        minNeighbors=5,
-        minSize=(int(minW), int(minH))
-    )
-
-    for (x, y, w, h) in faces:
-        # Crop a rectangle of interest for a face
-        roi_grey = grey[y:y + h, x:x + w]
-
-        # DEBUGGING - Displays rectangle around face
-        end_cord_x = x + w
-        end_cord_y = y + h
-        cv2.rectangle(
-            frame,
-            (x, y),
-            (end_cord_x, end_cord_y),
-            (0, 0, 255), 2
+        # Finds faces according to the cascade
+        minW = 0.1 * cap.get(3)
+        minH = 0.1 * cap.get(4)
+        faces = faceCascade.detectMultiScale(
+            grey,
+            scaleFactor=1.2,
+            minNeighbors=5,
+            minSize=(int(minW), int(minH))
         )
 
-        count += 1
+        for (x, y, w, h) in faces:
+            # Crop a rectangle of interest for a face
+            roi_grey = grey[y:y + h, x:x + w]
 
-        # Writes the cropped image to file
-        cv2.imwrite(user_dir + str(count) + ".jpg", roi_grey)
+            # DEBUGGING - Displays rectangle around face
+            end_cord_x = x + w
+            end_cord_y = y + h
+            cv2.rectangle(
+                frame,
+                (x, y),
+                (end_cord_x, end_cord_y),
+                (0, 0, 255), 2
+            )
 
-    # DEBUGGING - Displays video frame
-    cv2.imshow('frame', frame)
+            count += 1
 
-    # Quits if 'Q' pressed
-    if cv2.waitKey(20) & 0xFF == ord('q'):
-        break
-    # Or if 30 images have been taken
-    elif count >= 30:
-        break
+            # Writes the cropped image to file
+            cv2.imwrite(user_dir + str(count) + ".jpg", roi_grey)
 
-saveIDs(ids)
+        # DEBUGGING - Displays video frame
+        cv2.imshow('frame', frame)
 
-# Cleaning up
-cap.release()
-cv2.destroyAllWindows()
+        # Quits if 'Q' pressed
+        if cv2.waitKey(20) & 0xFF == ord('q'):
+            break
+        # Or if 30 images have been taken
+        elif count >= 30:
+            break
+
+    saveIDs(ids)
+
+    # Cleaning up
+    cap.release()
+    cv2.destroyAllWindows()
