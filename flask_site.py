@@ -32,11 +32,11 @@ def logout():
 def register():
     # Use REST API.
     if current_user.is_authenticated:
-        return redirect("/")
+        logout()
     form = RegisterForm()
     if form.validate_on_submit():
-        requests.post("http://127.0.0.1:5000/api/customer", request.form)
-        return redirect("/")
+        requests.post("http://127.0.0.1:5000/api/customer", data = request.form)
+        return redirect("/login")
     return render_template("register.html", form=form)
 
 @site.route("/cars", methods=["GET", "POST"])

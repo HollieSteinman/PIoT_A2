@@ -159,6 +159,17 @@ def addCustomer():
 
     return customerSchema.jsonify(newCustomer)
 
+# Endpoint to verify username and password
+@api.route("/api/customer/verify", methods = ["POST"])
+def verifyCustomer():
+    form = request.form
+    checkFieldsExist(form, "username", "password")
+    customer = Customer.query.filter_by(username=form["username"]).first()
+    if customer:
+        if sha256_crypt.verify(form["password"], customer.password):
+            return customerSchema.jsonify(customer)
+    return customerSchema.jsonify(None)
+
 # Endpoint to get all cars
 @api.route("/api/cars", methods = ["GET"])
 def getCars():
