@@ -14,6 +14,7 @@
                 <th scope="col">Body Type</th>
                 <th scope="col">Colour</th>
                 <th scope="col">Seats</th>
+                <th scope="col">Location</th>
                 <th scope="col">Price Per Hour</th>
                 <th></th>
             </tr>
@@ -26,6 +27,7 @@
                     <td>{{ car.body_type }}</td>
                     <td>{{ car.colour }}</td>
                     <td>{{ car.seats }}</td>
+                    <td><a href="https://www.google.com/maps/search/?api=1&query={{ car.location }}"> {{ car.location }}</td>
                     <td>{{ "$%.2f" % car.cost_per_hour }}</td>
                     <td><button type="submit" class="btn btn-dark" name="car_id" value="{{ car.car_id }}">Book Car</button></td>
                 </tr>
