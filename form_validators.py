@@ -16,8 +16,5 @@ def login_details_correct(form, field):
         if not user:
             raise ValidationError(message)
         else:
-            # if not sha256_crypt.verify(form.password.data, user.password):
-            print(form.password.data)
-            print(user.password)
-            if not form.password.data == user.password:
+            if not sha256_crypt.verify(form.password.data, user.password):
                 raise ValidationError(message)
