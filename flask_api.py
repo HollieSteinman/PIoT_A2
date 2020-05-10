@@ -11,6 +11,11 @@ api = Blueprint("api", __name__)
 db = SQLAlchemy()
 ma = Marshmallow()
 
+def checkFields(form, *args):
+    for arg in args:
+        if not arg in form:
+            raise NameError("Field missing values")
+
 # Declaring the model.
 class Customer(UserMixin, db.Model):
     __tablename__ = "customer"
@@ -162,24 +167,45 @@ def getCarsByStatus(status):
 
     return jsonify(result)
 
-# Endpoint to update person.
-@api.route("/person/<id>", methods = ["PUT"])
-def personUpdate(id):
-    person = Person.query.get(id)
-    name = json.loads(request.json)["name"]
+# Endpoint to get all bookings
+@api.route("/api/bookings", methods = ["GET"])
+def getBookings(customer_id):
+    bookings = Booking.query.all()
+    result = bookingsSchema.dump(bookings)
 
-    person.Name = name
+    return jsonify(result)
 
+# Endpoint to get bookings by customer
+@api.route("/api/bookings/<int:customer_id>", methods = ["GET"])
+def getBookingsByCustomer(customer_id):
+    bookings = Booking.query.filter_by(customer_id=customer_id).all()
+    result = bookingsSchema.dump(bookings)
+
+    return jsonify(result)
+
+# Endpoint to get bookings by customer and status
+@api.route("/api/bookings/customer/<int:customer_id>/status/<status>", methods = ["GET"])
+def getBookingsByCustomerAndStatus(customer_id, status):
+    bookings = Booking.query.filter_by(customer_id=customer_id, status=status).all()
+    result = bookingsSchema.dump(bookings)
+
+    return jsonify(result)
+
+# Endpoint to get bookings by customer and status
+@api.route("/api/booking", methods = ["POST"])
+def addBooking():
+    checkFields(request.form, "car_id", "customer_id", "start_datetime", "end_datetime")
+    newBooking = Booking(
+        car_id=request.form["car_id"],
+        customer_id=request.form["customer_id"],
+        start_datetime=request.form["start_datetime"],
+        end_datetime=request.form["end_datetime"],
+        status="active")
+    
+    car = Car.query.get(request.form["car_id"])
+    car.status = "unavailable"
+
+    db.session.add(newBooking)
     db.session.commit()
 
-    return personSchema.jsonify(person)
-
-# Endpoint to delete person.
-@api.route("/person/<id>", methods = ["DELETE"])
-def personDelete(id):
-    person = Person.query.get(id)
-
-    db.session.delete(person)
-    db.session.commit()
-
-    return personSchema.jsonify(person)
+    return bookingSchema.jsonify(newBooking)

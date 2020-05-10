@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block title %} Cars {% endblock %}
+
+{% block padded_content %}
+
+<h1>Cars</h1>
+<form method="POST">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Make</th>
+                <th scope="col">Model</th>
+                <th scope="col">Body Type</th>
+                <th scope="col">Colour</th>
+                <th scope="col">Seats</th>
+                <th scope="col">Price Per Hour</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in available_cars %}
+                <tr>
+                    <td>{{ car.make }}</td>
+                    <td>{{ car.model }}</td>
+                    <td>{{ car.body_type }}</td>
+                    <td>{{ car.colour }}</td>
+                    <td>{{ car.seats }}</td>
+                    <td>{{ "$%.2f" % car.cost_per_hour }}</td>
+                    <td><button type="submit" class="btn btn-dark" name="car_id" value="{{ car.car_id }}">Book Car</button></td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</form>
+{% endblock %}
