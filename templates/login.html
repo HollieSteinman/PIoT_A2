@@ -12,7 +12,7 @@
     {{ format_input(form.username) }}
     {{ format_input(form.password) }}
     <div>{{ form.remember_me() }} {{ form.remember_me.label }}</div>
-    <div>{{ form.submit() }}</div>
+    <div>{{ form.submit(class="btn btn-dark") }}</div>
 </form>
 
 <p>if you don't have an account, register here</p>
