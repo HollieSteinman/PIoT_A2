@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block padded_content %}
+
+<h1>Login</h1>
+
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    {{ format_errors(form.submit.errors) }}
+    {{ format_input(form.username) }}
+    {{ format_input(form.password) }}
+    <div>{{ form.remember_me() }} {{ form.remember_me.label }}</div>
+    <div>{{ form.submit(class="btn btn-dark") }}</div>
+</form>
+
+<p>if you don't have an account, register here</p>
+<a href="/register"><button>Register Page</button></a>
+
+{% endblock %}

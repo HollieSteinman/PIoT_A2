@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block title %}  {% endblock %}
+
+{% block padded_content %}
+
+<h1>Make a Booking</h1>
+
+<h2>Car Details</h2>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
+            <th scope="col">Body Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Seats</th>
+            <th scope="col">Price Per Hour</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.body_type }}</td>
+                <td>{{ car.colour }}</td>
+                <td>{{ car.seats }}</td>
+                <td>${{ car.cost_per_hour }}</td>
+            </tr>
+    </tbody>
+</table>
+
+<form method="POST">
+    <input type="hidden" name="car_id" value="{{ car.car_id }}">
+    <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+    <div>
+        <label for="start_datetime">Booking Start</label><br>
+        <input id="start_datetime" name="start_datetime" type="datetime-local" required>
+    </div>
+    <br>
+    <div>
+        <label for="end_datetime">Booking End</label><br>
+        <input id="end_datetime" name="end_datetime" type="datetime-local" required>
+    </div>
+    <br>
+    <input type="submit" class="btn btn-dark" value="Complete Booking">
+</form>
+
+{% endblock %}

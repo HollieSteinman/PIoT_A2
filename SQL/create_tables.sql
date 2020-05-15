@@ -3,7 +3,7 @@ CREATE TABLE `customer` (
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `username` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(100) NOT NULL,
   `email` varchar(254) NOT NULL,
   PRIMARY KEY (`customer_id`),
   UNIQUE KEY `customer_id_UNIQUE` (`customer_id`),
