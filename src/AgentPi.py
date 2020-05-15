@@ -12,7 +12,8 @@ class AgentPi():
 
         i = input()
         if i == '1':
-            print("Not implemented")
+            username = input("Username: ")
+            password = input("Password: ")
         elif i == '2':
             print("Recognising...")
             if faceRecognise.run():
