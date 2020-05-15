@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% macro generate_booking_row(booking) %}
+<tr>
+    <td>{{ booking.car_id }}</td>
+    <td>{{ booking.start_datetime }}</td>
+    <td>{{ booking.end_datetime }}</td>
+    <td>{{ booking.status }}</td>
+    {% if booking.status == "active" %}
+        <td>
+            <form method="POST">
+                <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+                <input type="hidden" name="car_id" value="{{ booking.car_id }}">
+                <input type="hidden" name="start_datetime" value="{{ booking.start_datetime }}">
+                <input type="submit" class="btn btn-dark" value="Cancel Booking">
+            </form>
+        </td>
+    {% else%}
+        <td></td>
+    {% endif %}
+</tr>
+{% endmacro %}
+
+{% block title %} Bookings {% endblock %}
+
+{% block padded_content %}
+
+<h1>Bookings</h1>
+
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Car ID</th>
+            <th scope="col">Booking Start</th>
+            <th scope="col">Booking End</th>
+            <th scope="col">Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in activeBookings %}
+            {{ generate_booking_row(booking) }}
+        {% endfor%}
+        {% for booking in completeBookings %}
+            {{ generate_booking_row(booking) }}
+        {% endfor%}
+        {% for booking in cancelledBookings %}
+            {{ generate_booking_row(booking) }}
+        {% endfor%}
+    </tbody>
+</table>
+
+{% endblock %}

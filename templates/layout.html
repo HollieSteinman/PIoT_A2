@@ -1,0 +1,73 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block html_attribs %} lang="en" {% endblock %}
+
+{% macro format_input(input) %}
+<div>
+    {{ input.label }}<br>
+    {{ input(size=32) }}<br>
+    {{ format_errors(input.errors) }}
+</div>
+{% endmacro %}
+
+{% macro format_error(error) %}
+    <span style="color: red;">[{{ error }}]</span>
+{% endmacro %}
+
+{% macro format_errors(errors) %}
+    {% for error in errors %}
+        {{ format_error(error) }}
+    {% endfor %}
+{% endmacro %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        #content
+        {
+            /* order: top right bottom left */
+            padding: 15px 15px 0px 15px;
+        }
+    </style>
+{% endblock %}
+
+{% macro generate_navitems() %}
+    {% for name, address in kwargs.items() %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ address }}">{{ name }}</a>
+        </li>
+    {% endfor %}
+{% endmacro%}
+
+{% macro logged_out_navbar() %}
+    {{ generate_navitems(Login="/login", Register="/register") }}
+{% endmacro %}
+
+{% macro logged_in_navbar() %}
+    {{ generate_navitems(Home="/", Cars="/cars", Bookings="/bookings", Logout="/logout") }}
+{% endmacro %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">pIoT</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if current_user.is_authenticated %}
+                {{ logged_in_navbar() }}
+            {% else %}
+                {{ logged_out_navbar() }}
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+    <div id="content">
+        {% block padded_content %}
+        {% endblock %}
+    </div>
+{% endblock %}
