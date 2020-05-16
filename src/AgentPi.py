@@ -1,6 +1,14 @@
 import faceRecognise
 import faceData
 import faceTrain
+import socket
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+PORT = 9350
+UNIC_FORMAT = "utf-8"
+BYTES = 1024
+FALSE = '0'
+TRUE = '1'
 
 class AgentPi():
 
@@ -12,8 +20,32 @@ class AgentPi():
 
         i = input()
         if i == '1':
-            username = input("Username: ")
-            password = input("Password: ")
+            # Connect to server
+            s.connect((socket.gethostname(), PORT))
+            # Successful connection message
+            msg = s.recv(BYTES)
+            # TODO if connection to server can't be established notify user
+            print(msg.decode())
+            # Get a username, keep trying until a valid username is entered
+            valid_username = FALSE
+            while valid_username == FALSE:
+                username = input("Username: ")
+                s.send(bytes(username, UNIC_FORMAT))
+                valid_username = s.recv(BYTES).decode()
+                if valid_username == FALSE:
+                    print("Username does not exist in system, please try again")
+
+            correct_password = FALSE
+            while correct_password == FALSE:
+                password = input("Password: ")
+                # TODO encrypt password
+                s.send(bytes(password, UNIC_FORMAT))
+                correct_password = s.recv(BYTES).decode()
+                if correct_password == TRUE:
+                    print("Login successful!")
+                else:
+                    print("Password incorrect, please try again")
+
         elif i == '2':
             print("Recognising...")
             if faceRecognise.run():
