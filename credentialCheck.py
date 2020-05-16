@@ -1,6 +1,6 @@
-# if sha256_crypt.verify(pwRecieved, databasePW)
-
 import socket
+import mysql.connector
+from passlib.hash import sha256_crypt
 
 QUEUE = 5
 PORT = 9350
@@ -8,6 +8,15 @@ BYTES = 1024
 UNIC_FORMAT = "utf-8"
 FALSE = '0'
 TRUE = '1'
+
+mydb = mysql.connector.connect(
+    host="35.197.185.32",
+    user="root",
+    passwd="3645",
+    database="car_share"
+)
+
+mycursor = mydb.cursor()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((socket.gethostname(), PORT))
@@ -22,14 +31,17 @@ while True:
     clientsocket.send(bytes("Connection established with server!", "utf-8"))
     # utf-8 denotes the type of bytes
     while True:
-        username = clientsocket.recv(BYTES)
+        username = clientsocket.recv(BYTES).decode()
         if not username:
             break
 
-        print("Recieved username: {}".format(username.decode()))
-        # TODO validate the username with database
-        valid = True
-        if valid:
+        print("Recieved username: {}".format(username))
+        query = '''SELECT username 
+                    FROM customer 
+                    WHERE username = \"{}\"'''.format(username)
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        if result:
             clientsocket.send(bytes(TRUE, UNIC_FORMAT))
             break
         else:

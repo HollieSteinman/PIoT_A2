@@ -2,6 +2,7 @@ import faceRecognise
 import faceData
 import faceTrain
 import socket
+from passlib.hash import sha256_crypt
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PORT = 9350
@@ -33,12 +34,12 @@ class AgentPi():
                 s.send(bytes(username, UNIC_FORMAT))
                 valid_username = s.recv(BYTES).decode()
                 if valid_username == FALSE:
-                    print("Username does not exist in system, please try again")
+                    print("Username \'{}\' does not exist in system, please try" 
+                            " again".format(username))
 
             correct_password = FALSE
             while correct_password == FALSE:
                 password = input("Password: ")
-                # TODO encrypt password
                 s.send(bytes(password, UNIC_FORMAT))
                 correct_password = s.recv(BYTES).decode()
                 if correct_password == TRUE:
