@@ -4,7 +4,7 @@ from flask_marshmallow import Marshmallow
 import os, requests, json
 from forms import LoginForm, RegisterForm
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_api import Customer
+from flask_database import Customer
 
 site = Blueprint("site", __name__)
 

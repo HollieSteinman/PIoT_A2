@@ -4,7 +4,8 @@ from flask import Flask, request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os, requests, json
-from flask_api import api, db, Customer
+from flask_api import api
+from flask_database import db, Customer
 from flask_site import site
 from flask_bootstrap import Bootstrap
 from config import Config
