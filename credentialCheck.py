@@ -28,7 +28,6 @@ while True:
     #   client socket object and address of the client
     clientsocket, address = s.accept()
     print(f"Connection from {address} has been established!")
-    clientsocket.send(bytes("Connection established with server!", "utf-8"))
     # utf-8 denotes the type of bytes
     while True:
         username = clientsocket.recv(BYTES).decode()
@@ -48,14 +47,17 @@ while True:
             clientsocket.send(bytes(FALSE, UNIC_FORMAT))
 
     while True:
-        password = clientsocket.recv(BYTES)
+        password = clientsocket.recv(BYTES).decode()
         if not password:
             break
 
-        print("Recieved password: {}".format(password.decode()))
-        # TODO validate password with database
-        correct = True
-        if correct:
+        print("Recieved password: {}".format(password))
+        query = '''SELECT password 
+                    FROM customer 
+                    WHERE username = \"{}\"'''.format(username)
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        if sha256_crypt.verify(password, result[0][0]):
             clientsocket.send(bytes(TRUE, UNIC_FORMAT))
             break
         else:

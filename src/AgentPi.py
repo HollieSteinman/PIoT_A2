@@ -21,16 +21,12 @@ class AgentPi():
 
         i = input()
         if i == '1':
-            # Connect to server
             s.connect((socket.gethostname(), PORT))
-            # Successful connection message
-            msg = s.recv(BYTES)
-            # TODO if connection to server can't be established notify user
-            print(msg.decode())
             # Get a username, keep trying until a valid username is entered
             valid_username = FALSE
             while valid_username == FALSE:
                 username = input("Username: ")
+                # Send the username entered to the server
                 s.send(bytes(username, UNIC_FORMAT))
                 valid_username = s.recv(BYTES).decode()
                 if valid_username == FALSE:
@@ -40,10 +36,14 @@ class AgentPi():
             correct_password = FALSE
             while correct_password == FALSE:
                 password = input("Password: ")
+                # Send the password entered to the server
                 s.send(bytes(password, UNIC_FORMAT))
                 correct_password = s.recv(BYTES).decode()
                 if correct_password == TRUE:
                     print("Login successful!")
+                    self.unlock()
+                    self.showMenu()
+
                 else:
                     print("Password incorrect, please try again")
 
@@ -55,7 +55,7 @@ class AgentPi():
                 self.showMenu()
             else:
                 print("Face not recognised.")
-                self.showMenu()
+                self.showLoginMenu()
         else:
             print("Incorrect input")
             self.showLoginMenu()
@@ -67,7 +67,12 @@ class AgentPi():
         self.locked = True
 
     def showMenu(self):
-        print("Car is: " + str(self.locked))
+        lock_status = ""
+        if self.locked:
+            lock_status = "locked"
+        else:
+            lock_status = "unlocked"
+        print("Car is: " + lock_status)
         print("1. Lock/Unlock")
         print("2. Return")
         print("3. Set up face recognition")
@@ -76,11 +81,11 @@ class AgentPi():
         if i == '1':
             if self.locked:
                 self.unlock()
-                print("Unlocked")
+                print("Car unlocked")
                 self.showMenu()
             else:
                 self.lock()
-                print("Locked")
+                print("Car locked")
                 self.showMenu()
         elif i == '2':
             print("Not implemented")
