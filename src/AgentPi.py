@@ -13,10 +13,11 @@ TRUE = '1'
 
 class AgentPi():
 
+    user = ""
     locked = True
 
     def showLoginMenu(self):
-        print("1. Sign in with credentials")
+        print("1. Unlock with credentials")
         print("2. Use face recognition")
 
         i = input()
@@ -40,8 +41,8 @@ class AgentPi():
                 s.send(bytes(password, UNIC_FORMAT))
                 correct_password = s.recv(BYTES).decode()
                 if correct_password == TRUE:
-                    print("Login successful!")
-                    self.unlock()
+                    self.user = username
+                    print("Login successful! Welcome {}".format(self.user))
                     self.showMenu()
 
                 else:
@@ -66,6 +67,13 @@ class AgentPi():
     def lock(self):
         self.locked = True
 
+    def returnCar(self):
+        print("Returned")
+        s.send(bytes("{} returning car".format(self.user), UNIC_FORMAT))
+        msg = s.recv(BYTES).decode()
+        print(msg)
+        self.showMenu()
+
     def showMenu(self):
         lock_status = ""
         if self.locked:
@@ -73,7 +81,7 @@ class AgentPi():
         else:
             lock_status = "unlocked"
         print("Car is: " + lock_status)
-        print("1. Lock/Unlock")
+        print("1. Unlock")
         print("2. Return")
         print("3. Set up face recognition")
 
@@ -84,11 +92,11 @@ class AgentPi():
                 print("Car unlocked")
                 self.showMenu()
             else:
-                self.lock()
-                print("Car locked")
+                print("Car already unlocked")
                 self.showMenu()
         elif i == '2':
-            print("Not implemented")
+            self.lock()
+            self.returnCar()
         elif i == '3':
             print("Scanning face...")
             faceData.gatherData()

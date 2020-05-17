@@ -31,9 +31,6 @@ while True:
     # utf-8 denotes the type of bytes
     while True:
         username = clientsocket.recv(BYTES).decode()
-        if not username:
-            break
-
         print("Recieved username: {}".format(username))
         query = '''SELECT username 
                     FROM customer 
@@ -48,9 +45,6 @@ while True:
 
     while True:
         password = clientsocket.recv(BYTES).decode()
-        if not password:
-            break
-
         print("Recieved password: {}".format(password))
         query = '''SELECT password 
                     FROM customer 
@@ -62,3 +56,18 @@ while True:
             break
         else:
             clientsocket.send(bytes(FALSE, UNIC_FORMAT))
+    
+    while True:
+        return_msg = clientsocket.recv(BYTES).decode()
+        print("Recieved return message: {}".format(return_msg))
+        # TODO Michael to use API endpoint to set car for user's current
+        # booking to available and booking to complete
+        return_successful = True #change to take value depending on whether the booking to update was found
+        if return_successful:
+            clientsocket.send(bytes("Car returned successfuly", UNIC_FORMAT))
+            break
+        else:
+            clientsocket.send(bytes("Return unsuccessful, please ensure you" 
+                                    " have an active booking", UNIC_FORMAT))
+            break
+    
