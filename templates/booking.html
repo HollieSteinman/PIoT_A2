@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}  {% endblock %}
+{% block title %} Booking - {{car.make}} {{car.model}} {% endblock %}
 
 {% block padded_content %}
 
@@ -35,7 +35,7 @@
     <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
     <div>
         <label for="start_datetime">Booking Start</label><br>
-        <input id="start_datetime" name="start_datetime" type="datetime-local" required>
+        <input id="start_datetime" name="start_datetime" type="datetime-local" onchange="setEndDateTimeMin()" required>
     </div>
     <br>
     <div>
@@ -46,4 +46,32 @@
     <input type="submit" class="btn btn-dark" value="Complete Booking">
 </form>
 
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function timeToString(value)
+        {
+            return value < 10 ? "0" + value : "" + value;
+        }
+
+        function setMinDate()
+        {
+            var current_date = new Date();
+            var month = timeToString(current_date.getMonth()+1);
+            var date = timeToString(current_date.getDate());
+            var hours = timeToString(current_date.getHours());
+            var minutes = timeToString(current_date.getMinutes());
+            var min = current_date.getFullYear()+'-'+month+'-'+date+"T"+hours+":"+minutes;
+            document.getElementById("start_datetime").min = min;
+        }
+
+        function setEndDateTimeMin()
+        {
+            document.getElementById("end_datetime").min = document.getElementById("start_datetime").value;
+        }
+        setMinDate()
+        setInterval(setMinDate, 1 * 1000);
+    </script>
 {% endblock %}
