@@ -3,11 +3,16 @@ import os
 
 
 def run():
+    """Attempt to recognise the face submitted by the user.
+    :return: bool - True or False value for success of recognition
+    """
+    
     # Loads cv2 cascade and trainer
-    faceCascade = cv2.CascadeClassifier('src/data/cascades/haarcascade_frontalface_default.xml')
+    faceCascade = cv2.CascadeClassifier(
+        './data/cascades/haarcascade_frontalface_default.xml')
     recogniser = cv2.face.LBPHFaceRecognizer_create()
-    if os.path.exists("src/data/trainer.yml"):
-        recogniser.read("src/data/trainer.yml")
+    if os.path.exists("./data/trainer.yml"):
+        recogniser.read("./data/trainer.yml")
     else:
         return False
 
@@ -52,7 +57,8 @@ def run():
             # Gets confidence of similarity to an id
             id, confidence = recogniser.predict(roi_grey)
 
-            # If high enough confidence - converts confidence to confidence percentage
+            # If high enough confidence - converts confidence to confidence
+            # percentage
             if confidence < confidenceCap:
                 return True
                 confidence = "  {0}%".format(round(100 - confidence))
@@ -61,13 +67,16 @@ def run():
                 return False
                 confidence = "  {0}%".format(round(100 - confidence))
 
-            # DEBUGGING - Puts the id and confidence percentage around the square
+            # DEBUGGING - Puts the id and confidence percentage around the
+            # square
     #         font = cv2.FONT_HERSHEY_SIMPLEX
     #         colour_text = (0, 0, 255)
     #         stroke_text = 1
     #
-    #         cv2.putText(frame, str(id), (x + 5, y - 5), font, 1, colour_text, stroke_text)
-    #         cv2.putText(frame, str(confidence), (x + 5, y + h - 5), font, 1, colour_text, stroke_text)
+    #         cv2.putText(frame, str(id), (x + 5, y - 5), font, 1, colour_text,
+    #           stroke_text)
+    #         cv2.putText(frame, str(confidence), (x + 5, y + h - 5), font, 1,
+    #           colour_text, stroke_text)
     #
     #         # DEBUGGING - Displays video frame
     #         cv2.imshow('frame', frame)

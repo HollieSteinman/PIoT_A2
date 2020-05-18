@@ -9,8 +9,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 user_dir = os.path.join(BASE_DIR, "data/faces/")
 
 
-# Loads IDs from csv
 def loadIDs():
+    """Load IDs from CSV file
+    :return: ids(list) - a list of ids taken from the csv file
+    """
+
     ids = []
     with open("src/data/ids.csv", 'r') as f:
         csvFile = csv.reader(f, delimiter=',')
@@ -20,10 +23,12 @@ def loadIDs():
     return ids
 
 
-# Trains recogniser
 def train():
+    """Train the recogniser using the samples
+    """
     # Loads cv2 cascade
-    faceCascade = cv2.CascadeClassifier('src/data/cascades/haarcascade_frontalface_default.xml')
+    faceCascade = cv2.CascadeClassifier(
+        './data/cascades/haarcascade_frontalface_default.xml')
     # Creates new LBPH recogniser
     recogniser = cv2.face.LBPHFaceRecognizer_create()
 
@@ -58,6 +63,3 @@ def train():
     # Trains and saves trainer - .save() may not work on Pi
     recogniser.train(faceSamples, np.array(labels))
     recogniser.save("src/data/trainer.yml")
-
-
-

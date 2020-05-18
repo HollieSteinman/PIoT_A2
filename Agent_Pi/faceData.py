@@ -6,15 +6,21 @@ import csv
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Loads cv2 cascade
-faceCascade = cv2.CascadeClassifier('src/data/cascades/haarcascade_frontalface_default.xml')
+faceCascade = cv2.CascadeClassifier(
+    './data/cascades/haarcascade_frontalface_default.xml')
 
 
-# Loads IDs from csv, creates new ID
 def loadIDs():
+    """Load IDs from CSV and creates a new ID
+    
+    :return: ids - a list of ids
+    :return: currentID: the new ID created at the end of the list
+    """
+
     ids = []
     currentID = 1
-    if os.path.exists("src/data/ids.csv"):
-        with open("src/data/ids.csv", 'r') as f:
+    if os.path.exists("./data/ids.csv"):
+        with open("./data/ids.csv", 'r') as f:
             csvFile = csv.reader(f, delimiter=',')
             for row in csvFile:
                 for column in row:
@@ -24,14 +30,18 @@ def loadIDs():
     return ids, currentID
 
 
-# Saves IDs into a csv file
 def saveIDs(ids):
-    with open("src/data/ids.csv", 'w') as f:
+    """Saves IDs into a CSV file
+    """
+    
+    with open("./data/ids.csv", 'w') as f:
         csvWriter = csv.writer(f, delimiter=',')
         csvWriter.writerow(ids)
 
 
 def gatherData():
+    """Use the default device camera to capture images of the users face
+    """
     ids, currentID = loadIDs()
 
     # Directory for the pictures being taken
