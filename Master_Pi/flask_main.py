@@ -31,6 +31,8 @@ login_manager.login_view = "/login"
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Load the current user using the login manager
+    """
     return Customer.query.get(user_id)
 
 app.register_blueprint(api)
@@ -38,4 +40,6 @@ app.register_blueprint(site)
 app.config.from_object(Config)
 
 if __name__ == "__main__":
+    """Run the flask application on localhost
+    """
     app.run(host = "0.0.0.0")

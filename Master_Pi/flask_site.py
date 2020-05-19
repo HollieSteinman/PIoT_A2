@@ -16,6 +16,8 @@ def index():
 
 @site.route("/login", methods=["GET", "POST"])
 def login():
+    """Serve customer login page
+    """
     form = LoginForm()
     if form.validate_on_submit():
         login_user(Customer.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
@@ -30,6 +32,8 @@ def logout():
 
 @site.route("/register", methods=["GET", "POST"])
 def register():
+    """Serve customer registration page
+    """
     # Use REST API.
     if current_user.is_authenticated:
         logout()
@@ -42,6 +46,8 @@ def register():
 @site.route("/cars", methods=["GET", "POST"])
 @login_required
 def cars():
+    """Serve car listing page
+    """
     if request.method == "POST":
         return redirect("/booking/" + request.form["car_id"])
     response = requests.get("http://127.0.0.1:5000/api/cars/status/available")
@@ -51,6 +57,8 @@ def cars():
 @site.route("/booking/<int:car_id>", methods=["GET", "POST"])
 @login_required
 def booking(car_id):
+    """Serve view booking page by car id
+    """
     response = requests.get("http://127.0.0.1:5000/api/car/{}".format(car_id))
     data = json.loads(response.text)
     if data["status"] == "available":
@@ -65,6 +73,8 @@ def booking(car_id):
 @site.route("/bookings", methods=["GET", "POST"])
 @login_required
 def bookings():
+    """Serve booking listing page by id
+    """
     if request.method == "POST":
         requests.put("http://127.0.0.1:5000/api/booking/status/cancelled", data=request.form)
     activeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/active".format(current_user.customer_id)).text)

@@ -62,7 +62,7 @@ while True:
         print("Recieved return message: {}".format(return_msg))
         # TODO Michael to use API endpoint to set car for user's current
         # booking to available and booking to complete
-        return_successful = True # change to take value depending on whether the booking to update was found
+        return_successful = True #change to take value depending on whether the booking to update was found
         if return_successful:
             clientsocket.send(bytes("Car returned successfuly", UNIC_FORMAT))
             break
