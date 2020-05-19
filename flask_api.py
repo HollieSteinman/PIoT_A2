@@ -92,6 +92,17 @@ def getCarsByStatus(status):
 
     return jsonify(result)
 
+def getCarsByStatusAndProperty(status, search_property, value):
+    cars = db.engine.execute('SELECT * FROM car WHERE status = "{}" AND LOWER({}) LIKE LOWER("%%{}%%")'.format(status, search_property, value))
+    result = carsSchema.dump(cars)
+
+    return jsonify(result)
+
+@api.route("/api/cars/available/property", methods = ["POST"])
+def getCarsAvailableByProperty():
+    form = request.form
+    return getCarsByStatusAndProperty("available", form["search_property"], form["search"])
+
 # Endpoint to get all bookings
 @api.route("/api/bookings", methods = ["GET"])
 def getBookings():

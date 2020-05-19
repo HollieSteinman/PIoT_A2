@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os, requests, json
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, SearchForm
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_database import Customer
 
@@ -35,18 +35,22 @@ def register():
         logout()
     form = RegisterForm()
     if form.validate_on_submit():
-        requests.post("http://127.0.0.1:5000/api/customer", data = request.form)
+        requests.post("http://127.0.0.1:5000/api/customer", data=request.form)
         return redirect("/login")
     return render_template("register.html", form=form)
 
 @site.route("/cars", methods=["GET", "POST"])
 @login_required
 def cars():
-    if request.method == "POST":
+    form = SearchForm()
+    if request.method == "POST" and "car_id" in request.form:
         return redirect("/booking/" + request.form["car_id"])
-    response = requests.get("http://127.0.0.1:5000/api/cars/status/available")
+    if form.is_submitted():
+        response = requests.post("http://127.0.0.1:5000/api/cars/available/property", data=request.form)
+    else:
+        response = requests.get("http://127.0.0.1:5000/api/cars/status/available")
     data = json.loads(response.text)
-    return render_template("cars.html", available_cars = data)
+    return render_template("cars.html", available_cars=data, form=form)
 
 @site.route("/booking/<int:car_id>", methods=["GET", "POST"])
 @login_required

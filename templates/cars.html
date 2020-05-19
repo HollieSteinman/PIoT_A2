@@ -2,9 +2,35 @@
 
 {% block title %} Cars {% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        #search-form *
+        {
+            height: 38px;
+            box-sizing: border-box;
+        }
+
+        #search-form :not(:last-child)
+        {
+            margin-right: 3px;
+        }
+    </style>
+{% endblock %}
+
 {% block padded_content %}
 
 <h1>Cars</h1>
+
+<div style="padding: 10px 0px 10px 0px;">
+    <form id="search-form" class="form-inline" method="POST">
+        {{ form.search_property }}
+        {{ form.search }}
+        {{ form.submit(class="btn btn-dark") }}
+        <a href="/cars"><button type="button" class="btn btn-dark">Clear</button></a>
+    </form>
+</div>
+
 <form method="POST">
     <table class="table">
         <thead class="thead-light">
