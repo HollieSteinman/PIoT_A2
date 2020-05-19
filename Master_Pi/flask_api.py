@@ -3,7 +3,7 @@ import os, requests, json
 from flask import current_app as app
 from passlib.hash import sha256_crypt
 from flask_database import *
-from calendar_utils import create_event
+# from calendar_utils import create_event
 
 api = Blueprint("api", __name__)
 
@@ -148,7 +148,7 @@ def addBooking():
     checkFieldsExist(form, "car_id", "customer_id", "start_datetime", "end_datetime")
 
     car = Car.query.get(request.form["car_id"])
-    event = create_event(form["start_datetime"]+":00", form["end_datetime"]+":00", "Booking for car {} {}".format(car.make, car.model))
+    # event = create_event(form["start_datetime"]+":00", form["end_datetime"]+":00", "Booking for car {} {}".format(car.make, car.model))
 
     newBooking = Booking(
         car_id=form["car_id"],
