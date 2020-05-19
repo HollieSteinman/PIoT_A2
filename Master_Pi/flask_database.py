@@ -7,6 +7,11 @@ ma = Marshmallow()
 
 # Declaring the model.
 class Customer(UserMixin, db.Model):
+    """Model declaration for customer
+
+    :param UserMixin:
+    :param db.Model: database model object
+    """
     __tablename__ = "customer"
     customer_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
     first_name = db.Column(db.Text, nullable=False)
@@ -27,11 +32,17 @@ class Customer(UserMixin, db.Model):
         self.email = email
 
 class CustomerSchema(ma.Schema):
+    """Database customer schema
+
+    :param ma.schema:
+    """
     # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
     def __init__(self, strict = True, **kwargs):
         super().__init__(**kwargs)
     
     class Meta:
+        """Fields to expose for customer
+        """
         # Fields to expose.
         fields = ("customer_id", "first_name", "last_name", "username", "email")
 
@@ -39,6 +50,10 @@ customerSchema = CustomerSchema()
 customersSchema = CustomerSchema(many = True)
 
 class Car(db.Model):
+    """Model declaration for car
+
+    :param db.Model: database model object
+    """
     __tablename__ = "car"
     car_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
     status = db.Column(db.Text, nullable=False)
@@ -62,11 +77,17 @@ class Car(db.Model):
         self.cost_per_hour = cost_per_hour
 
 class CarSchema(ma.Schema):
+    """Database car schema
+
+    :param ma.schema:
+    """
     # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
     def __init__(self, strict = True, **kwargs):
         super().__init__(**kwargs)
     
     class Meta:
+        """Fields to expose for car
+        """
         # Fields to expose.
         fields = ("car_id", "status", "make", "model", "body_type", "colour", "seats", "location", "cost_per_hour")
 
@@ -74,6 +95,10 @@ carSchema = CarSchema()
 carsSchema = CarSchema(many = True)
 
 class Booking(db.Model):
+    """Model declaration for booking
+
+    :param db.Model: database model object
+    """
     __tablename__ = "booking"
     car_id = db.Column(db.Integer, db.ForeignKey('car.car_id'), primary_key = True, nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), primary_key = True, nullable=False)
@@ -89,11 +114,17 @@ class Booking(db.Model):
         self.status = status
 
 class BookingSchema(ma.Schema):
+    """Database booking schema
+
+    :param ma.schema:
+    """
     # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
     def __init__(self, strict = True, **kwargs):
         super().__init__(**kwargs)
     
     class Meta:
+        """Fields to expose for booking
+        """
         # Fields to expose.
         fields = ("car_id", "customer_id", "start_datetime", "end_datetime", "status")
 

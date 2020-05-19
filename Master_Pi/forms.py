@@ -5,12 +5,16 @@ from wtforms.validators import DataRequired, Email
 from form_validators import unique_username, unique_email, login_details_correct
 
 class LoginForm(FlaskForm):
+    """Login form structured as a flask form
+    """
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In', validators=[login_details_correct])
 
 class RegisterForm(FlaskForm):
+    """Registration form structured as a flask form
+    """
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired(), unique_username])
