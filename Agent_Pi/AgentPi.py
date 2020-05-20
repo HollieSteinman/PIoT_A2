@@ -113,8 +113,12 @@ class AgentPi():
                 print("Car already unlocked")
                 self.showMenu()
         elif i == '2':
-            self.lock()
-            self.returnCar()
+            if self.locked == False:
+                self.lock()
+                self.returnCar()
+            else:
+                print("Car already locked")
+                self.showMenu()
         elif i == '3':
             print("Scanning face...")
             faceData.gatherData()
