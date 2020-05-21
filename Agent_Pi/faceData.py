@@ -74,23 +74,10 @@ def gatherData():
             # Crop a rectangle of interest for a face
             roi_grey = grey[y:y + h, x:x + w]
 
-            # DEBUGGING - Displays rectangle around face
-            end_cord_x = x + w
-            end_cord_y = y + h
-            cv2.rectangle(
-                frame,
-                (x, y),
-                (end_cord_x, end_cord_y),
-                (0, 0, 255), 2
-            )
-
             count += 1
 
             # Writes the cropped image to file
             cv2.imwrite(user_dir + str(count) + ".jpg", roi_grey)
-
-        # DEBUGGING - Displays video frame
-        cv2.imshow('frame', frame)
 
         # Quits if 'Q' pressed
         if cv2.waitKey(20) & 0xFF == ord('q'):
