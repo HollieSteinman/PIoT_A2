@@ -102,8 +102,10 @@ class AgentPi():
         print("1. Unlock")
         print("2. Return")
         print("3. Set up face recognition")
+        print("4. Exit")
 
         i = input()
+        
         if i == '1':
             if self.locked:
                 self.unlock()
@@ -113,12 +115,8 @@ class AgentPi():
                 print("Car already unlocked")
                 self.showMenu()
         elif i == '2':
-            if self.locked == False:
-                self.lock()
-                self.returnCar()
-            else:
-                print("Car already locked")
-                self.showMenu()
+            self.lock()
+            self.returnCar()
         elif i == '3':
             print("Scanning face...")
             faceData.gatherData()
@@ -126,6 +124,8 @@ class AgentPi():
             faceTrain.train()
             print("All done!")
             self.showMenu()
+        elif i == '4':
+            exit()
         else:
             print("Incorrect input")
             self.showMenu()
