@@ -18,6 +18,8 @@ def index():
 def login():
     """Serve customer login page
     """
+    if current_user.is_authenticated:
+        return redirect("/")
     form = LoginForm()
     if form.validate_on_submit():
         login_user(Customer.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
