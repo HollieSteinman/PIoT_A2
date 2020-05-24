@@ -108,6 +108,7 @@ class AgentPi():
         print("4. Exit")
 
         i = input()
+        
         if i == '1':
             if self.locked:
                 self.unlock()
