@@ -12,6 +12,10 @@ def unique_username(form, field):
     if customer:
         raise ValidationError("Username already taken")
 
+def valid_password(form, field):
+    if len(field.data) < 6:
+        raise ValidationError("Password must be at least 6 characters long")
+
 def unique_email(form, field):
     """Ensure that the email entered by the user on the form is unique
 
