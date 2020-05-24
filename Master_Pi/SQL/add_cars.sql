@@ -6,4 +6,7 @@ VALUES 	('available', 'Volkswagen', 'Passat', 'sedan', 'grey', 5,  '-37.766720,1
         ('available', 'Ferrari', '488', 'coupe', 'red', 2, '34.625479,-97.212649', 148),
         ('available', 'Nissan', 'Skyline GTR', 'sedan', 'black', 5, '34.625479,-97.212649', 100),
         ('available', 'Honda', 'Civic Type R', 'hatchback', 'red', 5, '34.625479,-97.212649', 35.25),
+        ('available', 'Toyota', 'Supra', 'coupe', 'silver', 2, '34.625479,-97.212649', 50),
+        ('available', 'Honda', 'Integra Type R', 'coupe', 'yellow', 4, '-37.766720,145.137650', 25),
+        ('available', 'Nissan', 'Silvia', 'coupe', 'silver', 5, '-37.781078,145.100199', 42.80),
         ('available', 'Mazda', 'RX7 FD', 'coupe', 'yellow', 2, '34.625479,-97.212649', 55.55);
