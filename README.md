@@ -1,4 +1,4 @@
-# PIoT Assignment 2
+# PIoT Assignment 2 - Paul's Group 18 on Canvas
 * Michael Sartorel (s3786267)
 * Hollie Steinman (s3784783)
 * Matthies Abera (s3779748)
