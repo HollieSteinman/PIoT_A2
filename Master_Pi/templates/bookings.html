@@ -27,6 +27,7 @@
 
 <h1>Bookings</h1>
 
+<h2>Current Bookings</h2>
 <table class="table">
     <thead class="thead-light">
         <tr>
@@ -41,6 +42,23 @@
         {% for booking in activeBookings %}
             {{ generate_booking_row(booking) }}
         {% endfor%}
+    </tbody>
+</table>
+
+<br><br>
+
+<h2>Past Bookings</h2>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Car ID</th>
+            <th scope="col">Booking Start</th>
+            <th scope="col">Booking End</th>
+            <th scope="col">Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
         {% for booking in completeBookings %}
             {{ generate_booking_row(booking) }}
         {% endfor%}
