@@ -105,13 +105,15 @@ class Booking(db.Model):
     start_datetime = db.Column(db.DateTime, primary_key = True, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Text, nullable=False)
+    calendar_id = db.Column(db.Text)
 
-    def __init__(self, car_id, customer_id, start_datetime, end_datetime, status):
+    def __init__(self, car_id, customer_id, start_datetime, end_datetime, status, calendar_id):
         self.car_id = car_id
         self.customer_id = customer_id
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
         self.status = status
+        self.calendar_id = calendar_id
 
 class BookingSchema(ma.Schema):
     """Database booking schema
@@ -126,7 +128,7 @@ class BookingSchema(ma.Schema):
         """Fields to expose for booking
         """
         # Fields to expose.
-        fields = ("car_id", "customer_id", "start_datetime", "end_datetime", "status")
+        fields = ("car_id", "customer_id", "start_datetime", "end_datetime", "status", "calendar_id")
 
 bookingSchema = BookingSchema()
 bookingsSchema = BookingSchema(many = True)

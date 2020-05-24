@@ -3,7 +3,7 @@ import os, requests, json
 from flask import current_app as app
 from passlib.hash import sha256_crypt
 from flask_database import *
-# from calendar_utils import create_event
+from calendar_utils import create_event, delete_event
 
 api = Blueprint("api", __name__)
 
@@ -189,15 +189,25 @@ def addBooking():
     form = request.form
     checkFieldsExist(form, "car_id", "customer_id", "start_datetime", "end_datetime")
 
-    car = Car.query.get(request.form["car_id"])
-    # event = create_event(form["start_datetime"]+":00", form["end_datetime"]+":00", "Booking for car {} {}".format(car.make, car.model))
+    car = Car.query.get(form["car_id"])
+    customer = Customer.query.get(form["customer_id"])
+    description = "car details - Make: {}, Model: {}, Body Type: {}, Colour: {}, Seats: {}, Location: {}, Cost Per Hour: ${}\nBooked by {}".format(
+        car.make, car.model, car.body_type, car.colour, car.seats, car.location, car.cost_per_hour, customer.username)
+    event = create_event(
+        form["start_datetime"]+":00", form["end_datetime"]+":00", "Booking for car {} {}".format(car.make, car.model), 
+        description=description)
+    if event != None:
+        event_id = event['id']
+    else:
+        event_id = None
 
     newBooking = Booking(
         car_id=form["car_id"],
         customer_id=form["customer_id"],
         start_datetime=form["start_datetime"],
         end_datetime=form["end_datetime"],
-        status="active")
+        status="active",
+        calendar_id=event_id)
     
     car.status = "unavailable"
 
@@ -219,6 +229,8 @@ def setBookingStatus(car_id, customer_id, start_datetime, status):
         car = Car.query.get(car_id)
         if status != "active":
             car.status = "available"
+            if status == "cancelled":
+                delete_event(booking.calendar_id)
         else:
             car.status = "unavailable"
 
