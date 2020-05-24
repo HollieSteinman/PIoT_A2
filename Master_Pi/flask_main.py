@@ -11,6 +11,9 @@ from flask_bootstrap import Bootstrap
 from config import Config
 from flask_login import LoginManager
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 bs = Bootstrap(app)
