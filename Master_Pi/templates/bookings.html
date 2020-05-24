@@ -3,8 +3,8 @@
 {% macro generate_booking_row(booking) %}
 <tr>
     <td>{{ booking.car_id }}</td>
-    <td>{{ booking.start_datetime }}</td>
-    <td>{{ booking.end_datetime }}</td>
+    <td class="time">{{ booking.start_datetime }}</td>
+    <td class="time">{{ booking.end_datetime }}</td>
     <td>{{ booking.status }}</td>
     {% if booking.status == "active" %}
         <td>
@@ -68,4 +68,31 @@
     </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function timeToString(value)
+        {
+            return value < 10 ? "0" + value : "" + value;
+        }
+
+        function formatDateTime(datetime)
+        {
+            tempdate = new Date(datetime);
+            year = tempdate.getFullYear();
+            month = timeToString(tempdate.getMonth() + 1);
+            day = timeToString(tempdate.getDate());
+            hours = timeToString(tempdate.getHours()%12 || 12);
+            minutes = timeToString(tempdate.getMinutes());
+            ampm = tempdate.getHours() < 12 ? "AM" : "PM"
+            return day+"/"+month+"/"+year+" at "+hours+":"+minutes+" "+ampm;
+        }
+
+        for (var timeclass of document.getElementsByClassName("time"))
+        {
+            timeclass.innerHTML = formatDateTime(timeclass.innerHTML);
+        }
+    </script>
 {% endblock %}
