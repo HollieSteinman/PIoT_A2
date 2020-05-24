@@ -1,6 +1,7 @@
 import socket
 import mysql.connector
 from passlib.hash import sha256_crypt
+import requests
 
 QUEUE = 5
 PORT = 9350
@@ -31,43 +32,52 @@ while True:
     # utf-8 denotes the type of bytes
     while True:
         username = clientsocket.recv(BYTES).decode()
-        print("Recieved username: {}".format(username))
-        query = '''SELECT username 
-                    FROM customer 
-                    WHERE username = \"{}\"'''.format(username)
-        mycursor.execute(query)
-        result = mycursor.fetchall()
-        if result:
-            clientsocket.send(bytes(TRUE, UNIC_FORMAT))
-            break
+        if username:
+            print("Recieved username: {}".format(username))
+            query = '''SELECT username 
+                        FROM customer 
+                        WHERE username = \"{}\"'''.format(username)
+            mycursor.execute(query)
+            result = mycursor.fetchall()
+            if result:
+                clientsocket.send(bytes(TRUE, UNIC_FORMAT))
+                break
+            else:
+                clientsocket.send(bytes(FALSE, UNIC_FORMAT))
         else:
-            clientsocket.send(bytes(FALSE, UNIC_FORMAT))
+            break
 
     while True:
         password = clientsocket.recv(BYTES).decode()
-        print("Recieved password: {}".format(password))
-        query = '''SELECT password 
-                    FROM customer 
-                    WHERE username = \"{}\"'''.format(username)
-        mycursor.execute(query)
-        result = mycursor.fetchall()
-        if sha256_crypt.verify(password, result[0][0]):
-            clientsocket.send(bytes(TRUE, UNIC_FORMAT))
-            break
+        if password:
+            print("Recieved password: {}".format(password))
+            query = '''SELECT password 
+                        FROM customer 
+                        WHERE username = \"{}\"'''.format(username)
+            mycursor.execute(query)
+            result = mycursor.fetchall()
+            if sha256_crypt.verify(password, result[0][0]):
+                clientsocket.send(bytes(TRUE, UNIC_FORMAT))
+                break
+            else:
+                clientsocket.send(bytes(FALSE, UNIC_FORMAT))
         else:
-            clientsocket.send(bytes(FALSE, UNIC_FORMAT))
+            break
     
     while True:
-        return_msg = clientsocket.recv(BYTES).decode()
-        print("Recieved return message: {}".format(return_msg))
-        # TODO Michael to use API endpoint to set car for user's current
-        # booking to available and booking to complete
-        return_successful = True #change to take value depending on whether the booking to update was found
-        if return_successful:
-            clientsocket.send(bytes("Car returned successfuly", UNIC_FORMAT))
-            break
+        car_id = clientsocket.recv(BYTES).decode()
+        if car_id:
+            print("Recieved return message: car id to return is {} for the user {}".format(car_id, username))
+            # TODO Michael to use API endpoint to set car for user's current
+            # booking to available and booking to complete
+            user = requests.get("http://127.0.0.1:5000/api/customer/username/{}".format(username)).json()
+            booking = requests.get("http://127.0.0.1:5000/api/booking/car/{}/status/active".format(car_id)).json()
+            if booking and booking["customer_id"] == user["customer_id"]:
+                requests.put("http://127.0.0.1:5000/api/booking/status/complete", data=booking)
+                clientsocket.send(bytes("Car returned successfuly", UNIC_FORMAT))
+            else:
+                clientsocket.send(bytes("Return unsuccessful, please ensure you" 
+                                        " have an active booking", UNIC_FORMAT))
         else:
-            clientsocket.send(bytes("Return unsuccessful, please ensure you" 
-                                    " have an active booking", UNIC_FORMAT))
             break
     

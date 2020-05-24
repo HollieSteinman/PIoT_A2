@@ -2,6 +2,7 @@ import faceRecognise
 import faceData
 import faceTrain
 import socket
+import sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PORT = 9350
@@ -17,6 +18,9 @@ class AgentPi():
     :param use(str): The username for the user successfully logged in.
     :param locked(bool): The locked/unlocked status of the car the Agent Pi is currently attached to.
     """
+
+    def __init__(self, car_id):
+        self.car_id = car_id
 
     user = ""
     locked = True
@@ -76,15 +80,14 @@ class AgentPi():
         self.locked = False
 
     def lock(self):
-        """Lock the car the the Agent Pu is currently attached to
+        """Lock the car the the Agent Pi is currently attached to
         """
         self.locked = True
 
     def returnCar(self):
         """ Return the car, send a message to the Master Pi notifying it that the
         """
-        print("Returned")
-        s.send(bytes("{} returning car".format(self.user), UNIC_FORMAT))
+        s.send(bytes(self.car_id, UNIC_FORMAT))
         msg = s.recv(BYTES).decode()
         print(msg)
         self.showMenu()
@@ -129,6 +132,10 @@ class AgentPi():
             print("Incorrect input")
             self.showMenu()
 
-
-aPi = AgentPi()
-aPi.showLoginMenu()
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        car_id = sys.argv[1]
+    else:
+        car_id = 1
+    aPi = AgentPi(car_id)
+    aPi.showLoginMenu()

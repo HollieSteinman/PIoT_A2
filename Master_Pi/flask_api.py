@@ -159,6 +159,14 @@ def getCustomersActiveBookings(customer_id):
     """
     return getBookingsByCustomerAndStatus(customer_id, "active")
 
+# Endpoint to get a car's active booking
+@api.route("/api/booking/car/<int:car_id>/status/active", methods = ["GET"])
+def getCarsActiveBooking(car_id):
+    booking = Booking.query.filter_by(car_id=car_id, status="active").first()
+    result = bookingSchema.dump(booking)
+
+    return jsonify(result)
+
 # Endpoint to get a customer's complete bookings
 @api.route("/api/bookings/customer/<int:customer_id>/status/complete", methods = ["GET"])
 def getCustomersCompleteBookings(customer_id):
@@ -205,17 +213,19 @@ def setBookingStatus(car_id, customer_id, start_datetime, status):
         car_id=car_id, 
         customer_id=customer_id, 
         start_datetime=start_datetime).first()
-    booking.status = status
+    if booking:
+        booking.status = status
 
-    car = Car.query.get(car_id)
-    if status != "active":
-        car.status = "available"
-    else:
-        car.status = "unavailable"
+        car = Car.query.get(car_id)
+        if status != "active":
+            car.status = "available"
+        else:
+            car.status = "unavailable"
 
-    db.session.commit()
+        db.session.commit()
 
-    return bookingSchema.jsonify(booking)
+        return bookingSchema.jsonify(booking)
+    return bookingSchema.jsonify(None)
 
 # Endpoint to update booking status to cancelled
 @api.route("/api/booking/status/cancelled", methods = ["PUT"])
