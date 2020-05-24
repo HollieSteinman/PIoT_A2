@@ -75,6 +75,14 @@ def booking(car_id):
     else:
         return redirect("/cars")
 
+def cars_as_dict():
+    cars = requests.get("http://127.0.0.1:5000/api/cars").json()
+    cars_dict = {}
+    for car in cars:
+        cars_dict[car["car_id"]] = car
+    return cars_dict
+
+
 @site.route("/bookings", methods=["GET", "POST"])
 @login_required
 def bookings():
@@ -86,4 +94,5 @@ def bookings():
     completeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/complete".format(current_user.customer_id)).text)
     cancelledBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/cancelled".format(current_user.customer_id)).text)
 
-    return render_template("bookings.html", activeBookings = activeBookings, completeBookings = completeBookings, cancelledBookings = cancelledBookings)
+    return render_template("bookings.html", activeBookings = activeBookings, 
+    completeBookings = completeBookings, cancelledBookings = cancelledBookings, cars=cars_as_dict())

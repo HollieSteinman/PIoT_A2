@@ -3,6 +3,8 @@
 {% macro generate_booking_row(booking) %}
 <tr>
     <td>{{ booking.car_id }}</td>
+    <td>{{ cars[booking.car_id]["make"] }}</td>
+    <td>{{ cars[booking.car_id]["model"] }}</td>
     <td class="time">{{ booking.start_datetime }}</td>
     <td class="time">{{ booking.end_datetime }}</td>
     <td>{{ booking.status }}</td>
@@ -32,6 +34,8 @@
     <thead class="thead-light">
         <tr>
             <th scope="col">Car ID</th>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
             <th scope="col">Booking Start</th>
             <th scope="col">Booking End</th>
             <th scope="col">Status</th>
@@ -52,6 +56,8 @@
     <thead class="thead-light">
         <tr>
             <th scope="col">Car ID</th>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
             <th scope="col">Booking Start</th>
             <th scope="col">Booking End</th>
             <th scope="col">Status</th>
