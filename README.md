@@ -6,6 +6,9 @@
 
 ## Contribution
 Michael: Setting up flask website for user login, registration and viewing cars, bookings etc.
+
 Luke: Setting up Google Cloud database and socket programming communication between Agent Pi and Master Pi
+
 Hollie: Agent pi credential and facial recognition login
+
 Matthies: Bluetooth notification to phone on car unlock and unit testing
