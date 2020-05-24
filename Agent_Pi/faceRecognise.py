@@ -41,16 +41,6 @@ def run():
         )
 
         for (x, y, w, h) in faces:
-            # DEBUGGING - Displays rectangle around face
-            end_cord_x = x + w
-            end_cord_y = y + h
-            cv2.rectangle(
-                frame,
-                (x, y),
-                (end_cord_x, end_cord_y),
-                (0, 0, 255), 2
-            )
-
             # Crop a rectangle of interest for a face
             roi_grey = grey[y:y + h, x:x + w]
 
@@ -61,30 +51,8 @@ def run():
             # percentage
             if confidence < confidenceCap:
                 return True
-                confidence = "  {0}%".format(round(100 - confidence))
             else:
-                # DEBUGGING - Sets id to unknown
                 return False
-                confidence = "  {0}%".format(round(100 - confidence))
 
-            # DEBUGGING - Puts the id and confidence percentage around the
-            # square
-    #         font = cv2.FONT_HERSHEY_SIMPLEX
-    #         colour_text = (0, 0, 255)
-    #         stroke_text = 1
-    #
-    #         cv2.putText(frame, str(id), (x + 5, y - 5), font, 1, colour_text,
-    #           stroke_text)
-    #         cv2.putText(frame, str(confidence), (x + 5, y + h - 5), font, 1,
-    #           colour_text, stroke_text)
-    #
-    #         # DEBUGGING - Displays video frame
-    #         cv2.imshow('frame', frame)
-    #
-    #     # Quits if 'Q' pressed
-    #     if cv2.waitKey(20) & 0xFF == ord('q'):
-    #         break
-    #
-    # # Cleaning up
     cap.release()
     cv2.destroyAllWindows()
