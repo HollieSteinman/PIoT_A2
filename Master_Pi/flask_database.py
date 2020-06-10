@@ -134,3 +134,41 @@ class BookingSchema(ma.Schema):
 
 bookingSchema = BookingSchema()
 bookingsSchema = BookingSchema(many = True)
+
+class Issue(db.Model):
+    """Model declaration for issue
+
+    :param db.Model: database model object
+    """
+    __tablename__ = "issue"
+    issue_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date_reported = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Text, nullable=False)
+    engineer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.car_id'), nullable=False,)
+
+    def __init__(self, description, date_reported, engineer_id, car_id, issue_id=None):
+        self.issue_id = issue_id
+        self.description = description
+        self.date_reported = date_reported
+        self.engineer_id = engineer_id
+        self.car_id = car_id
+
+class IssueSchema(ma.Schema):
+    """Database issue schema
+
+    :param ma.schema:
+    """
+    # Reference: https://github.com/marshmallow-code/marshmallow/issues/377#issuecomment-261628415
+    def __init__(self, strict = True, **kwargs):
+        super().__init__(**kwargs)
+    
+    class Meta:
+        """Fields to expose for customer
+        """
+        # Fields to expose.
+        fields = ("issue_id", "description", "date_reported", "engineer_id", "car_id")
+
+issueSchema = IssueSchema()
+issuesSchema = IssueSchema(many = True)
