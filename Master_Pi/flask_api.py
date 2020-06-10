@@ -23,8 +23,8 @@ def checkFieldsExist(form, *args):
 def getCustomers():
     """Endpoint to display all customers
     """
-    customers = Customer.query.all()
-    result = customersSchema.dump(customers)
+    customers = User.query.filter_by(user_type="customer").all()
+    result = usersSchema.dump(customers)
 
     return jsonify(result)
 
@@ -33,24 +33,24 @@ def getCustomers():
 def getCustomer(customer_id):
     """Endpoint to get customer by id
     """
-    customer = Customer.query.get(customer_id)
-    return customerSchema.jsonify(customer)
+    customer = User.query.get(customer_id)
+    return userSchema.jsonify(customer)
 
 # Endpoint to get customer by username.
 @api.route("/api/customer/username/<username>", methods = ["GET"])
 def getCustomerByUsername(username):
     """Endpoint to get customer by username
     """
-    customer = Customer.query.filter_by(username=username).first()
-    return customerSchema.jsonify(customer)
+    customer = User.query.filter_by(username=username, user_type="customer").first()
+    return userSchema.jsonify(customer)
 
 # Endpoint to get customer by email.
 @api.route("/api/customer/email/<email>", methods = ["GET"])
 def getCustomerByEmail(email):
     """Endpoint to get customer by email
     """
-    customer = Customer.query.filter_by(email=email).first()
-    return customerSchema.jsonify(customer)
+    customer = User.query.filter_by(email=email, user_type="customer").first()
+    return userSchema.jsonify(customer)
 
 # Endpoint to create new customer.
 @api.route("/api/customer", methods = ["POST"])
@@ -59,16 +59,17 @@ def addCustomer():
     """
     form = request.form
     checkFieldsExist(form, "first_name", "last_name", "username", "password", "email")
-    newCustomer = Customer(
+    newCustomer = User(
         first_name=form["first_name"],
         last_name=form["last_name"],
         username=form["username"],
         password=sha256_crypt.using(rounds = 1000).hash(form["password"]),
-        email=form["email"])
+        email=form["email"],
+        user_type="customer")
     db.session.add(newCustomer)
     db.session.commit()
 
-    return customerSchema.jsonify(newCustomer)
+    return userSchema.jsonify(newCustomer)
 
 # Endpoint to verify username and password
 @api.route("/api/customer/verify", methods = ["POST"])
@@ -77,11 +78,11 @@ def verifyCustomer():
     """
     form = request.form
     checkFieldsExist(form, "username", "password")
-    customer = Customer.query.filter_by(username=form["username"]).first()
+    customer = User.query.filter_by(username=form["username"], user_type="customer").first()
     if customer:
         if sha256_crypt.verify(form["password"], customer.password):
-            return customerSchema.jsonify(customer)
-    return customerSchema.jsonify(None)
+            return userSchema.jsonify(customer)
+    return userSchema.jsonify(None)
 
 # Endpoint to get all cars
 @api.route("/api/cars", methods = ["GET"])
@@ -139,7 +140,7 @@ def getBookings():
 def getBookingsByCustomer(customer_id):
     """Endpoint to get booking by customer
     """
-    bookings = Booking.query.filter_by(customer_id=customer_id).all()
+    bookings = Booking.query.filter_by(user_id=customer_id).all()
     result = bookingsSchema.dump(bookings)
 
     return jsonify(result)
@@ -147,7 +148,7 @@ def getBookingsByCustomer(customer_id):
 def getBookingsByCustomerAndStatus(customer_id, status):
     """Endpoint to get bookings by customer and status
     """
-    bookings = Booking.query.filter_by(customer_id=customer_id, status=status).all()
+    bookings = Booking.query.filter_by(user_id=customer_id, status=status).all()
     result = bookingsSchema.dump(bookings)
 
     return jsonify(result)
@@ -190,7 +191,7 @@ def addBooking():
     checkFieldsExist(form, "car_id", "customer_id", "start_datetime", "end_datetime")
 
     car = Car.query.get(form["car_id"])
-    customer = Customer.query.get(form["customer_id"])
+    customer = User.query.get(form["customer_id"])
     description = "car details - Make: {}, Model: {}, Body Type: {}, Colour: {}, Seats: {}, Location: {}, Cost Per Hour: ${}\nBooked by {}".format(
         car.make, car.model, car.body_type, car.colour, car.seats, car.location, car.cost_per_hour, customer.username)
     event = create_event(
@@ -203,7 +204,7 @@ def addBooking():
 
     newBooking = Booking(
         car_id=form["car_id"],
-        customer_id=form["customer_id"],
+        user_id=form["customer_id"],
         start_datetime=form["start_datetime"],
         end_datetime=form["end_datetime"],
         status="active",
@@ -221,7 +222,7 @@ def setBookingStatus(car_id, customer_id, start_datetime, status):
     """
     booking = Booking.query.filter_by(
         car_id=car_id, 
-        customer_id=customer_id, 
+        user_id=customer_id,
         start_datetime=start_datetime).first()
     if booking:
         booking.status = status

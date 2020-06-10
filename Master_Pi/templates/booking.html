@@ -32,7 +32,7 @@
 
 <form method="POST">
     <input type="hidden" name="car_id" value="{{ car.car_id }}">
-    <input type="hidden" name="customer_id" value="{{ current_user.customer_id }}">
+    <input type="hidden" name="customer_id" value="{{ current_user.user_id }}">
     <div>
         <label for="start_datetime">Booking Start</label><br>
         <input id="start_datetime" name="start_datetime" type="datetime-local" onchange="setEndDateTimeMin()" required>

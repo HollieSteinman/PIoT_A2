@@ -6,33 +6,35 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 # Declaring the model.
-class Customer(UserMixin, db.Model):
-    """Model declaration for customer
+class User(UserMixin, db.Model):
+    """Model declaration for user
 
     :param UserMixin:
     :param db.Model: database model object
     """
-    __tablename__ = "customer"
-    customer_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
+    __tablename__ = "user"
+    user_id = db.Column(db.Integer, primary_key = True, autoincrement = True, unique = True, nullable=False)
     first_name = db.Column(db.Text, nullable=False)
     last_name = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, unique = True, nullable=False)
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, unique = True, nullable=False)
+    user_type = db.Column("type", db.Text)
 
     def get_id(self):
-        return self.customer_id
+        return self.user_id
 
-    def __init__(self, first_name, last_name, username, password, email, customer_id=None):
-        self.customer_id = customer_id
+    def __init__(self, first_name, last_name, username, password, email, user_type, user_id=None):
+        self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
         self.password = password
         self.email = email
+        self.user_type = user_type
 
-class CustomerSchema(ma.Schema):
-    """Database customer schema
+class UserSchema(ma.Schema):
+    """Database user schema
 
     :param ma.schema:
     """
@@ -44,10 +46,10 @@ class CustomerSchema(ma.Schema):
         """Fields to expose for customer
         """
         # Fields to expose.
-        fields = ("customer_id", "first_name", "last_name", "username", "email")
+        fields = ("user_id", "first_name", "last_name", "username", "email", "type")
 
-customerSchema = CustomerSchema()
-customersSchema = CustomerSchema(many = True)
+userSchema = UserSchema()
+usersSchema = UserSchema(many = True)
 
 class Car(db.Model):
     """Model declaration for car
@@ -101,15 +103,15 @@ class Booking(db.Model):
     """
     __tablename__ = "booking"
     car_id = db.Column(db.Integer, db.ForeignKey('car.car_id'), primary_key = True, nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'), primary_key = True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key = True, nullable=False)
     start_datetime = db.Column(db.DateTime, primary_key = True, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.Text, nullable=False)
     calendar_id = db.Column(db.Text)
 
-    def __init__(self, car_id, customer_id, start_datetime, end_datetime, status, calendar_id):
+    def __init__(self, car_id, user_id, start_datetime, end_datetime, status, calendar_id):
         self.car_id = car_id
-        self.customer_id = customer_id
+        self.user_id = user_id
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
         self.status = status
@@ -128,7 +130,7 @@ class BookingSchema(ma.Schema):
         """Fields to expose for booking
         """
         # Fields to expose.
-        fields = ("car_id", "customer_id", "start_datetime", "end_datetime", "status", "calendar_id")
+        fields = ("car_id", "user_id", "start_datetime", "end_datetime", "status", "calendar_id")
 
 bookingSchema = BookingSchema()
 bookingsSchema = BookingSchema(many = True)
