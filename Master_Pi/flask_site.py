@@ -4,7 +4,7 @@ from flask_marshmallow import Marshmallow
 import os, requests, json
 from forms import LoginForm, RegisterForm, SearchForm
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_database import Customer
+from flask_database import User
 
 site = Blueprint("site", __name__)
 
@@ -22,7 +22,7 @@ def login():
         return redirect("/")
     form = LoginForm()
     if form.validate_on_submit():
-        login_user(Customer.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
+        login_user(User.query.filter_by(username=form.username.data).first(), remember=form.remember_me.data)
         return redirect(request.args.get('next') or "/")
     return render_template("login.html", form=form)
 
@@ -90,9 +90,9 @@ def bookings():
     """
     if request.method == "POST":
         requests.put("http://127.0.0.1:5000/api/booking/status/cancelled", data=request.form)
-    activeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/active".format(current_user.customer_id)).text)
-    completeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/complete".format(current_user.customer_id)).text)
-    cancelledBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/cancelled".format(current_user.customer_id)).text)
+    activeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/active".format(current_user.user_id)).text)
+    completeBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/complete".format(current_user.user_id)).text)
+    cancelledBookings = json.loads(requests.get("http://127.0.0.1:5000/api/bookings/customer/{}/status/cancelled".format(current_user.user_id)).text)
 
     return render_template("bookings.html", activeBookings = activeBookings, 
     completeBookings = completeBookings, cancelledBookings = cancelledBookings, cars=cars_as_dict())

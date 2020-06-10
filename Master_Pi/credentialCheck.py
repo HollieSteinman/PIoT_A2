@@ -35,7 +35,7 @@ while True:
         if username:
             print("Recieved username: {}".format(username))
             query = '''SELECT username 
-                        FROM customer 
+                        FROM user 
                         WHERE username = \"{}\"'''.format(username)
             mycursor.execute(query)
             result = mycursor.fetchall()
@@ -52,7 +52,7 @@ while True:
         if password:
             print("Recieved password: {}".format(password))
             query = '''SELECT password 
-                        FROM customer 
+                        FROM user 
                         WHERE username = \"{}\"'''.format(username)
             mycursor.execute(query)
             result = mycursor.fetchall()
@@ -72,7 +72,7 @@ while True:
             # booking to available and booking to complete
             user = requests.get("http://127.0.0.1:5000/api/customer/username/{}".format(username)).json()
             booking = requests.get("http://127.0.0.1:5000/api/booking/car/{}/status/active".format(car_id)).json()
-            if booking and booking["customer_id"] == user["customer_id"]:
+            if booking and booking["user_id"] == user["user_id"]:
                 requests.put("http://127.0.0.1:5000/api/booking/status/complete", data=booking)
                 clientsocket.send(bytes("Car returned successfuly", UNIC_FORMAT))
             else:
