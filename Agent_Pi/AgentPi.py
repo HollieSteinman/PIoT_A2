@@ -5,6 +5,7 @@ import QRCode
 import engineerBluetooth
 import socket
 import sys
+import time
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 PORT = 9350
@@ -12,9 +13,10 @@ UNIC_FORMAT = "utf-8"
 BYTES = 1024
 FALSE = '0'
 TRUE = '1'
+QUERY_IDENTIFIER = ["LOGIN", "MAC", "ENGDETAILS"]
 
 
-class AgentPi():
+class AgentPi:
     """AgentPi class allows for user interaction with the car: unlocking with face or login details, locking and returning as well as adding a new face to recognise.
 
     :param use(str): The username for the user successfully logged in.
@@ -39,6 +41,7 @@ class AgentPi():
         # Log in with username and password
         if i == '1':
             s.connect((socket.gethostname(), PORT))
+            s.send(bytes(QUERY_IDENTIFIER[0], UNIC_FORMAT))
             # Get a username, keep trying until a valid username is entered
             valid_username = FALSE
             while valid_username == FALSE:
@@ -77,8 +80,14 @@ class AgentPi():
             print("Scanning for devices...")
 
             s.connect((socket.gethostname(), PORT))
+            self.engineerMenu()
+            s.send(bytes(QUERY_IDENTIFIER[1], UNIC_FORMAT))
 
-            engineerBluetooth.bt_scan()
+            if engineerBluetooth.bt_scan(s):
+                self.unlock()
+                self.engineerMenu()
+            else:
+                print("Cannot find an authorised device.")
 
         else:
             print("Incorrect input")
@@ -103,8 +112,57 @@ class AgentPi():
         self.showMenu()
 
     def engineerMenu(self):
-        print("Recognising QR code...")
-        #QRCode.scan()
+        lock_status = ""
+        if self.locked:
+            lock_status = "locked"
+        else:
+            lock_status = "unlocked"
+
+        print("Car is: " + lock_status)
+        print("1. Unlock/Lock")
+        print("2. Scan QR code")
+        print("3. Exit")
+
+        i = input()
+
+        if i == '1':
+            if self.locked:
+                self.unlock()
+                print("Car unlocked")
+                self.showMenu()
+            else:
+                self.lock()
+                print("Car locked")
+                self.showMenu()
+        if i == '2':
+            print("Recognising QR code...")
+            username = QRCode.scan()
+            if username is not False:
+                print("QR code found.")
+                s.send(bytes(QUERY_IDENTIFIER[2], UNIC_FORMAT))
+                time.sleep(0.4)
+                s.send(bytes(username, UNIC_FORMAT))
+                returned = s.recv(BYTES).decode()
+                if returned == TRUE:
+                    firstName = s.recv(BYTES).decode()
+                    lastName = s.recv(BYTES).decode()
+                    email = s.recv(BYTES).decode()
+
+                    print("Engineer found:")
+                    print("\nFIRST NAME: " + firstName)
+                    print("LAST NAME: " + lastName)
+                    print("EMAIL: " + email + "\n")
+                else:
+                    print("Engineer not found.")
+
+                self.engineerMenu()
+            else:
+                print("No QR code found")
+                self.engineerMenu()
+        if i == '3':
+            exit()
+        else:
+            print()
 
     def showMenu(self):
         """The menu displayed to the user following a successful login
