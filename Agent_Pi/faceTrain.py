@@ -15,7 +15,7 @@ def loadIDs():
     """
 
     ids = []
-    with open("src/data/ids.csv", 'r') as f:
+    with open("./data/ids.csv", 'r') as f:
         csvFile = csv.reader(f, delimiter=',')
         for row in csvFile:
             for column in row:
@@ -62,4 +62,4 @@ def train():
 
     # Trains and saves trainer - .save() may not work on Pi
     recogniser.train(faceSamples, np.array(labels))
-    recogniser.save("src/data/trainer.yml")
+    recogniser.save("./data/trainer.yml")

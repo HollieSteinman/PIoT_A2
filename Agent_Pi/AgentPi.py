@@ -1,6 +1,8 @@
 import faceRecognise
 import faceData
 import faceTrain
+import QRCode
+import engineerBluetooth
 import socket
 import sys
 
@@ -31,6 +33,7 @@ class AgentPi():
 
         print("1. Unlock with credentials")
         print("2. Use face recognition")
+        print("3. Engineer options")
 
         i = input()
         # Log in with username and password
@@ -70,6 +73,13 @@ class AgentPi():
             else:
                 print("Face not recognised.")
                 self.showLoginMenu()
+        elif i == '3':
+            print("Scanning for devices...")
+
+            s.connect((socket.gethostname(), PORT))
+
+            engineerBluetooth.bt_scan()
+
         else:
             print("Incorrect input")
             self.showLoginMenu()
@@ -91,6 +101,10 @@ class AgentPi():
         msg = s.recv(BYTES).decode()
         print(msg)
         self.showMenu()
+
+    def engineerMenu(self):
+        print("Recognising QR code...")
+        #QRCode.scan()
 
     def showMenu(self):
         """The menu displayed to the user following a successful login
