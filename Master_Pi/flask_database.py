@@ -46,7 +46,7 @@ class UserSchema(ma.Schema):
         """Fields to expose for customer
         """
         # Fields to expose.
-        fields = ("user_id", "first_name", "last_name", "username", "email", "type")
+        fields = ("user_id", "first_name", "last_name", "username", "email", "user_type")
 
 userSchema = UserSchema()
 usersSchema = UserSchema(many = True)
