@@ -24,6 +24,7 @@
 
 <div style="padding: 10px 0px 10px 0px;">
     <form id="search-form" class="form-inline" method="POST">
+        {{ form.hidden_tag() }}
         {{ form.search_property }}
         {{ form.search }}
         {{ form.submit(class="btn btn-dark") }}
@@ -31,34 +32,32 @@
     </form>
 </div>
 
-<form method="POST">
-    <table class="table">
-        <thead class="thead-light">
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
+            <th scope="col">Body Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Seats</th>
+            <th scope="col">Location</th>
+            <th scope="col">Price Per Hour</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in available_cars %}
             <tr>
-                <th scope="col">Make</th>
-                <th scope="col">Model</th>
-                <th scope="col">Body Type</th>
-                <th scope="col">Colour</th>
-                <th scope="col">Seats</th>
-                <th scope="col">Location</th>
-                <th scope="col">Price Per Hour</th>
-                <th></th>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.body_type }}</td>
+                <td>{{ car.colour }}</td>
+                <td>{{ car.seats }}</td>
+                <td><a href="https://www.google.com/maps/search/?api=1&query={{ car.location }}"> {{ car.location }}</td>
+                <td>{{ "$%.2f" % car.cost_per_hour }}</td>
+                <td><a href="/booking/{{ car.car_id }}"><button type="button" class="btn btn-dark">Book Car</button></a></td>
             </tr>
-        </thead>
-        <tbody>
-            {% for car in available_cars %}
-                <tr>
-                    <td>{{ car.make }}</td>
-                    <td>{{ car.model }}</td>
-                    <td>{{ car.body_type }}</td>
-                    <td>{{ car.colour }}</td>
-                    <td>{{ car.seats }}</td>
-                    <td><a href="https://www.google.com/maps/search/?api=1&query={{ car.location }}"> {{ car.location }}</td>
-                    <td>{{ "$%.2f" % car.cost_per_hour }}</td>
-                    <td><button type="submit" class="btn btn-dark" name="car_id" value="{{ car.car_id }}">Book Car</button></td>
-                </tr>
-            {% endfor%}
-        </tbody>
-    </table>
-</form>
+        {% endfor%}
+    </tbody>
+</table>
 {% endblock %}

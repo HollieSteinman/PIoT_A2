@@ -50,9 +50,7 @@ def cars():
     """Serve car listing page
     """
     form = SearchForm()
-    if request.method == "POST" and "car_id" in request.form:
-        return redirect("/booking/" + request.form["car_id"])
-    if form.is_submitted():
+    if form.validate_on_submit():
         response = requests.post("http://127.0.0.1:5000/api/cars/available/property", data=request.form)
     else:
         response = requests.get("http://127.0.0.1:5000/api/cars/status/available")
