@@ -8,7 +8,20 @@ from flask_database import User
 
 site = Blueprint("site", __name__)
 
-# Client webpage.
+def cars_as_dict():
+    cars = requests.get("http://127.0.0.1:5000/api/cars").json()
+    cars_dict = {}
+    for car in cars:
+        cars_dict[car["car_id"]] = car
+    return cars_dict
+
+def users_as_dict():
+    users = requests.get("http://127.0.0.1:5000/api/users").json()
+    users_dict = {}
+    for user in users:
+        users_dict[user["user_id"]] = user
+    return users_dict
+
 @site.route("/")
 @login_required
 def index():
@@ -72,14 +85,6 @@ def booking(car_id):
             return render_template("booking.html", car = data)
     else:
         return redirect("/cars")
-
-def cars_as_dict():
-    cars = requests.get("http://127.0.0.1:5000/api/cars").json()
-    cars_dict = {}
-    for car in cars:
-        cars_dict[car["car_id"]] = car
-    return cars_dict
-
 
 @site.route("/bookings", methods=["GET", "POST"])
 @login_required
