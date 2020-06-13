@@ -148,10 +148,11 @@ class Issue(db.Model):
     engineer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     car_id = db.Column(db.Integer, db.ForeignKey('car.car_id'), nullable=False,)
 
-    def __init__(self, description, date_reported, engineer_id, car_id, issue_id=None):
+    def __init__(self, description, date_reported, status, engineer_id, car_id, issue_id=None):
         self.issue_id = issue_id
         self.description = description
         self.date_reported = date_reported
+        self.status = status
         self.engineer_id = engineer_id
         self.car_id = car_id
 

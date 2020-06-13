@@ -1,0 +1,89 @@
+{% extends 'layout.html' %}
+
+{% block title %} Issues {% endblock %}
+
+{% macro generate_cols() %}
+<tr>
+    <th scope="col">Car ID</th>
+    <th scope="col">Make</th>
+    <th scope="col">Model</th>
+    <th scope="col">Body Type</th>
+    <th scope="col">Colour</th>
+    <th scope="col">Seats</th>
+    <th scope="col">Location</th>
+    <th scope="col">Description</th>
+    <th scope="col">Date Reported</th>
+</tr>
+{% endmacro %}
+
+{% macro generate_issue_row(issue) %}
+<tr>
+    <td>{{ issue.car_id }}</td>
+    <td>{{ cars[issue.car_id]["make"] }}</td>
+    <td>{{ cars[issue.car_id]["model"] }}</td>
+    <td>{{ cars[issue.car_id]["body_type"] }}</td>
+    <td>{{ cars[issue.car_id]["colour"] }}</td>
+    <td>{{ cars[issue.car_id]["seats"] }}</td>
+    <td><a href="https://www.google.com/maps/search/?api=1&query={{ cars[issue.car_id]['location'] }}"> {{ cars[issue.car_id]["location"] }}</td>
+    <td>{{ issue.description }}</td>
+    <td class="time">{{ issue.date_reported }}</td>
+</tr>
+{% endmacro %}
+
+{% block padded_content %}
+
+<h1>Issues</h1>
+
+<h2>Unresolved Issues</h2>
+<table class="table">
+    <thead class="thead-light">
+        {{ generate_cols() }}
+    </thead>
+    <tbody>
+        {% for issue in unresolved_issues %}
+            {{ generate_issue_row(issue) }}
+        {% endfor%}
+    </tbody>
+</table>
+
+<br><br>
+
+<h2>Resolved Issues</h2>
+<table class="table">
+    <thead class="thead-light">
+        {{ generate_cols() }}
+    </thead>
+    <tbody>
+        {% for issue in resolved_issues %}
+            {{ generate_issue_row(issue) }}
+        {% endfor%}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function timeToString(value)
+        {
+            return value < 10 ? "0" + value : "" + value;
+        }
+
+        function formatDateTime(datetime)
+        {
+            tempdate = new Date(datetime);
+            year = tempdate.getFullYear();
+            month = timeToString(tempdate.getMonth() + 1);
+            day = timeToString(tempdate.getDate());
+            hours = timeToString(tempdate.getHours()%12 || 12);
+            minutes = timeToString(tempdate.getMinutes());
+            ampm = tempdate.getHours() < 12 ? "AM" : "PM"
+            return day+"/"+month+"/"+year+" at "+hours+":"+minutes+" "+ampm;
+        }
+
+        for (var timeclass of document.getElementsByClassName("time"))
+        {
+            timeclass.innerHTML = formatDateTime(timeclass.innerHTML);
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block title %} Users {% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        #search-form *
+        {
+            height: 38px;
+            box-sizing: border-box;
+        }
+
+        #search-form :not(:last-child)
+        {
+            margin-right: 3px;
+        }
+    </style>
+{% endblock %}
+
+{% block padded_content %}
+
+<h1>Users</h1>
+
+<div style="padding: 10px 0px 10px 0px;">
+    <form id="search-form" class="form-inline" method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.search_property }}
+        {{ form.search }}
+        {{ form.submit(class="btn btn-dark") }}
+        <a href="/users"><button type="button" class="btn btn-dark">Clear</button></a>
+    </form>
+</div>
+
+<form method="POST">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.user_type }}</td>
+                    <td><a href="/edit/user/{{user.user_id}}"><button type="button" class="btn btn-dark">Edit</button></a></td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</form>
+{% endblock %}

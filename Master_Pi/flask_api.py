@@ -4,6 +4,7 @@ from flask import current_app as app
 from passlib.hash import sha256_crypt
 from flask_database import *
 from calendar_utils import create_event, delete_event
+from datetime import datetime
 
 api = Blueprint("api", __name__)
 
@@ -44,13 +45,13 @@ def getCustomerByUsername(username):
     customer = User.query.filter_by(username=username, user_type="customer").first()
     return userSchema.jsonify(customer)
 
-# Endpoint to get customer by email.
-@api.route("/api/customer/email/<email>", methods = ["GET"])
+# Endpoint to get user by email.
+@api.route("/api/user/email/<email>", methods = ["GET"])
 def getCustomerByEmail(email):
-    """Endpoint to get customer by email
+    """Endpoint to get user by email
     """
-    customer = User.query.filter_by(email=email, user_type="customer").first()
-    return userSchema.jsonify(customer)
+    user = User.query.filter_by(email=email).first()
+    return userSchema.jsonify(user)
 
 # Endpoint to create new customer.
 @api.route("/api/customer", methods = ["POST"])
@@ -72,16 +73,16 @@ def addCustomer():
     return userSchema.jsonify(newCustomer)
 
 # Endpoint to verify username and password
-@api.route("/api/customer/verify", methods = ["POST"])
-def verifyCustomer():
+@api.route("/api/user/verify", methods = ["POST"])
+def verifyUser():
     """Endpoint to verify username and password
     """
     form = request.form
     checkFieldsExist(form, "username", "password")
-    customer = User.query.filter_by(username=form["username"], user_type="customer").first()
-    if customer:
-        if sha256_crypt.verify(form["password"], customer.password):
-            return userSchema.jsonify(customer)
+    user = User.query.filter_by(username=form["username"]).first()
+    if user:
+        if sha256_crypt.verify(form["password"], user.password):
+            return userSchema.jsonify(user)
     return userSchema.jsonify(None)
 
 # Endpoint to get all cars
@@ -119,11 +120,26 @@ def getCarsByStatusAndProperty(status, search_property, value):
 
     return jsonify(result)
 
+# method which returns cars with a certain property
+def getCarsByProperty(search_property, value):
+    cars = db.engine.execute('SELECT * FROM car WHERE LOWER({}) LIKE LOWER("%%{}%%")'.format(search_property, value))
+    result = carsSchema.dump(cars)
+
+    return jsonify(result)
+
 # Endpoint to get available cars with a property
 @api.route("/api/cars/available/property", methods = ["POST"])
 def getCarsAvailableByProperty():
     form = request.form
+    checkFieldsExist(form, "search_property", "search")
     return getCarsByStatusAndProperty("available", form["search_property"], form["search"])
+
+# Endpoint to get cars with a property
+@api.route("/api/cars/property", methods = ["POST"])
+def getAllCarsByProperty():
+    form = request.form
+    checkFieldsExist(form, "search_property", "search")
+    return getCarsByProperty(form["search_property"], form["search"])
 
 # Endpoint to get all bookings
 @api.route("/api/bookings", methods = ["GET"])
@@ -257,3 +273,129 @@ def setBookingStatusComplete():
     form = request.form
     checkFieldsExist(form, "car_id", "customer_id", "start_datetime")
     return setBookingStatus(form["car_id"], form["customer_id"], form["start_datetime"], "complete")
+
+# Endpoint to get user by username.
+@api.route("/api/user/username/<username>", methods = ["GET"])
+def getUserByUsername(username):
+    """Endpoint to get user by username
+    """
+    user = User.query.filter_by(username=username).first()
+    return userSchema.jsonify(user)
+
+@api.route("/api/engineer/<int:engineer_id>/issues", methods = ["GET"])
+def getEngineersIssues(engineer_id):
+    issues = Issue.query.filter_by(engineer_id=engineer_id).all()
+    result = issuesSchema.dump(issues)
+
+    return issuesSchema.jsonify(result)
+
+@api.route("/api/engineer/<int:engineer_id>/issues/resolved", methods = ["GET"])
+def getEngineersResolvedIssues(engineer_id):
+    issues = Issue.query.filter_by(engineer_id=engineer_id, status="resolved").all()
+    result = issuesSchema.dump(issues)
+
+    return issuesSchema.jsonify(result)
+
+@api.route("/api/engineer/<int:engineer_id>/issues/unresolved", methods = ["GET"])
+def getEngineersUnresolvedIssues(engineer_id):
+    issues = Issue.query.filter_by(engineer_id=engineer_id, status="unresolved").all()
+    result = issuesSchema.dump(issues)
+
+    return issuesSchema.jsonify(result)
+
+
+@api.route("/api/bookings/car/<int:car_id>", methods = ["GET"])
+def getCarsBookings(car_id):
+    bookings = Booking.query.filter_by(car_id=car_id)
+    result = bookingsSchema.dump(bookings)
+
+    return bookingsSchema.jsonify(result)
+
+@api.route("/api/users", methods=["GET"])
+def getUsers():
+    users = User.query.all()
+    result = usersSchema.dump(users)
+
+    return usersSchema.jsonify(result)
+
+@api.route("/api/engineers", methods = ["GET"])
+def getEngineers():
+    engineers = User.query.filter_by(user_type="engineer").all()
+    result = usersSchema.dump(engineers)
+
+    return usersSchema.jsonify(result)
+
+@api.route("/api/user/<int:user_id>", methods = ["GET"])
+def getUser(user_id):
+    """Endpoint to get user by id
+    """
+    user = User.query.get(user_id)
+    return userSchema.jsonify(user)
+
+@api.route("/api/user", methods=["PUT"])
+def updateUser():
+    form = request.form
+    checkFieldsExist(form, "user_id", "first_name", "last_name", "username", "email", "user_type")
+    user = User.query.get(form["user_id"])
+    user.first_name = form["first_name"]
+    user.last_name = form["last_name"]
+    user.username = form["username"]
+    user.email = form["email"]
+    user.user_type = form["user_type"]
+    db.session.commit()
+    return userSchema.jsonify(user)
+
+@api.route("/api/car", methods=["PUT"])
+def updateCar():
+    form = request.form
+    checkFieldsExist(form, "car_id", "status", "make", "model", "body_type", "colour", "seats", "cost_per_hour")
+    car = Car.query.get(form["car_id"])
+    car.status = form["status"]
+    car.make = form["make"]
+    car.model = form["model"]
+    car.body_type = form["body_type"]
+    car.colour = form["colour"]
+    car.seats = form["seats"]
+    car.cost_per_hour = form["cost_per_hour"]
+    if form["status"] == "unavailable":
+        activeBooking = Booking.query.filter_by(car_id=form["car_id"], status="active").first()
+        if activeBooking:
+            activeBooking.status = "cancelled"
+    db.session.commit()
+    return carSchema.jsonify(car)
+
+@api.route("/api/car/<int:car_id>/history")
+def getCarHistory(car_id):
+    bookings = Booking.query.filter_by(car_id=car_id).all()
+    result = bookingsSchema.dump(bookings)
+
+    return jsonify(result)
+
+@api.route("/api/issue", methods=["POST"])
+def createIssue():
+    form = request.form
+    checkFieldsExist(form, "description", "status", "engineer_id", "car_id")
+    newIssue = Issue(
+        description=form["description"],
+        date_reported=datetime.now(),
+        status=form["status"],
+        engineer_id=form["engineer_id"],
+        car_id=form["car_id"])
+
+    Car.query.get(form["car_id"]).status = "unavailable"
+    activeBooking = Booking.query.filter_by(car_id=form["car_id"], status="active").first()
+    if activeBooking:
+        activeBooking.status = "cancelled"
+    db.session.add(newIssue)
+    db.session.commit()
+
+    return issueSchema.jsonify(newIssue)
+
+@api.route("/api/users/property", methods =["POST"])
+def getUsersByProperty():
+    form = request.form
+    checkFieldsExist(form, "search_property", "search")
+    users = db.engine.execute('SELECT * FROM user WHERE LOWER({}) LIKE LOWER("%%{}%%")'.format(form["search_property"], form["search"]))
+    result = usersSchema.dump(users)
+
+    return usersSchema.jsonify(result)
