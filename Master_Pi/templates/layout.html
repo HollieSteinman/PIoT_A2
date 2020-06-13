@@ -57,7 +57,7 @@
                 {% elif current_user.user_type == "admin" %}
                     {{ generate_navitems(Home="/", Cars="/cars/all", Users="/users", Logout="/logout") }}
                 {% elif current_user.user_type == "manager" %}
-                    {{ generate_navitems(Home="/", Cars="/cars", Bookings="/bookings", Logout="/logout") }}
+                    {{ generate_navitems(Home="/", Data="/data", Logout="/logout") }}
                 {% elif current_user.user_type == "engineer" %}
                     {{ generate_navitems(Home="/", Issues="/issues", Logout="/logout") }}
                 {% endif %}

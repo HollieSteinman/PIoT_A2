@@ -210,3 +210,14 @@ def issues():
     unresolved_issues = requests.get("http://127.0.0.1:5000/api/engineer/{}/issues/unresolved".format(current_user.user_id)).json()
     resolved_issues = requests.get("http://127.0.0.1:5000/api/engineer/{}/issues/resolved".format(current_user.user_id)).json()
     return render_template("issues.html", cars=cars_as_dict(), unresolved_issues=unresolved_issues, resolved_issues=resolved_issues)
+# End of Engineer Pages
+
+# Manager Pages
+@site.route("/data", methods=["GET"])
+@login_required
+def dataAnalytics():
+    if (current_user.user_type != "manager"):
+        return redirect("/unauthorised")
+
+    return render_template("data_analytics.html")
+# End of Manager Pages
