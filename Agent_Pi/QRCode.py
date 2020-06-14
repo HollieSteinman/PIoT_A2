@@ -1,6 +1,7 @@
 import cv2
 import time
 
+
 def scan():
     # default video capture
     cap = cv2.VideoCapture(0)
@@ -17,7 +18,6 @@ def scan():
     while True:
         # if timed out, break
         if time.time() >= timeout:
-            print("timeout")
             break
 
         # read the capture
@@ -29,7 +29,7 @@ def scan():
         if decoded is not "":
             return decoded
             # testing - output credentials
-            #cv2.putText(frame, decoded, (50, 50), font, 2,
+            # cv2.putText(frame, decoded, (50, 50), font, 2,
             #           (255, 0, 0), 3)
 
         # testing - show capture
@@ -45,5 +45,3 @@ def scan():
 
     return False
 
-# for testing
-#scan()

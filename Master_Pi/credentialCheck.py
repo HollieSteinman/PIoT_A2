@@ -69,10 +69,10 @@ class CredCheck:
 
     def mac(self, clientsocket, mycursor):
         while True:
+            # retrieve MAC address
             mac = clientsocket.recv(BYTES).decode()
             if mac:
                 if mac == FALSE:
-                    print("no more MAC")
                     break
                 print("Recieved MAC: {}".format(mac))
                 query = '''SELECT mac_address
@@ -88,48 +88,82 @@ class CredCheck:
             else:
                 break
 
-    def engDetails(self, clientsocket, mycursor):
+    def engDetails(self, clientsocket, mycursor, mydb):
         while True:
             username = clientsocket.recv(BYTES).decode()
             if username:
+                car_id = clientsocket.recv(BYTES).decode()
+                print("Recieved car id: {}".format(car_id))
                 print("Recieved username: {}".format(username))
-                query = '''SELECT first_name, last_name, email
+                query = '''SELECT user_id, first_name, last_name, email
                                     FROM user 
                                     WHERE username = \"{}\"
-                                    AND type = \"engineer\"'''.format(username)
+                                    AND type = \'engineer\''''.format(username)
                 mycursor.execute(query)
                 result = mycursor.fetchall()
+
                 if result:
                     clientsocket.send(bytes(TRUE, UNIC_FORMAT))
-                    time.sleep(0.4)
-                    clientsocket.send(bytes(result[0][0], UNIC_FORMAT))
-                    time.sleep(0.4)
-                    clientsocket.send(bytes(result[0][1], UNIC_FORMAT))
-                    time.sleep(0.4)
-                    clientsocket.send(bytes(result[0][2], UNIC_FORMAT))
-                    break
+
+                    query = '''SELECT issue_id, description
+                                        FROM issue 
+                                        WHERE engineer_id = \"{}\"
+                                        AND car_id = \"{}\"
+                                        AND status = 'unresolved\''''.format(result[0][0], car_id)
+                    mycursor.execute(query)
+                    result2 = mycursor.fetchall()
+
+                    if result2:
+                        # update db
+                        query = '''UPDATE issue SET status = 'resolved' WHERE issue_id = "{}"'''.format(result2[0][0])
+                        mycursor.execute(query)
+
+                        # commit update to db
+                        mydb.commit()
+
+                        # using time.sleep as multiple sending of packets concatenates
+                        clientsocket.send(bytes(TRUE, UNIC_FORMAT))
+                        time.sleep(0.4)
+                        # first name
+                        clientsocket.send(bytes(result[0][1], UNIC_FORMAT))
+                        time.sleep(0.4)
+                        # last name
+                        clientsocket.send(bytes(result[0][2], UNIC_FORMAT))
+                        time.sleep(0.4)
+                        # email
+                        clientsocket.send(bytes(result[0][3], UNIC_FORMAT))
+                        time.sleep(0.4)
+                        # issue desc.
+                        clientsocket.send(bytes(result2[0][1], UNIC_FORMAT))
+                        break
+                    else:
+                        clientsocket.send(bytes(FALSE, UNIC_FORMAT))
+                        break
                 else:
                     clientsocket.send(bytes(FALSE, UNIC_FORMAT))
                     break
             else:
                 break
 
-    def handleType(self, clientsocket, mycursor):
+    def handleType(self, clientsocket, mycursor, mydb):
         while True:
-            print("called handle")
+            # find the type of data requested
             type = clientsocket.recv(BYTES).decode()
 
             if type:
                 print("Received type: {}".format(type))
                 if type == QUERY_IDENTIFIER[0]:
+                    # handle login
                     self.login(clientsocket, mycursor)
-                    self.handleType(clientsocket, mycursor)
+                    self.handleType(clientsocket, mycursor, mydb)
                 elif type == QUERY_IDENTIFIER[1]:
+                    # handle MAC address
                     self.mac(clientsocket, mycursor)
-                    self.handleType(clientsocket, mycursor)
+                    self.handleType(clientsocket, mycursor, mydb)
                 elif type == QUERY_IDENTIFIER[2]:
-                    self.engDetails(clientsocket, mycursor)
-                    self.handleType(clientsocket, mycursor)
+                    # handle engineer details
+                    self.engDetails(clientsocket, mycursor, mydb)
+                    self.handleType(clientsocket, mycursor, mydb)
 
     def run(self):
         mydb = mysql.connector.connect(
@@ -152,10 +186,8 @@ class CredCheck:
             clientsocket, address = s.accept()
             print(f"Connection from {address} has been established!")
 
-            # utf-8 denotes the type of bytes
-            self.handleType(clientsocket, mycursor)
-
-            # TODO clean up connection
+            # handle received data
+            self.handleType(clientsocket, mycursor, mydb)
 
 
 CredCheck().run()

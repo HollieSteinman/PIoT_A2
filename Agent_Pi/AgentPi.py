@@ -80,7 +80,6 @@ class AgentPi:
             print("Scanning for devices...")
 
             s.connect((socket.gethostname(), PORT))
-            self.engineerMenu()
             s.send(bytes(QUERY_IDENTIFIER[1], UNIC_FORMAT))
 
             if engineerBluetooth.bt_scan(s):
@@ -112,7 +111,6 @@ class AgentPi:
         self.showMenu()
 
     def engineerMenu(self):
-        lock_status = ""
         if self.locked:
             lock_status = "locked"
         else:
@@ -139,36 +137,49 @@ class AgentPi:
             username = QRCode.scan()
             if username is not False:
                 print("QR code found.")
+
                 s.send(bytes(QUERY_IDENTIFIER[2], UNIC_FORMAT))
                 time.sleep(0.4)
                 s.send(bytes(username, UNIC_FORMAT))
+                time.sleep(0.4)
+                s.send(bytes(self.car_id, UNIC_FORMAT))
+
                 returned = s.recv(BYTES).decode()
                 if returned == TRUE:
-                    firstName = s.recv(BYTES).decode()
-                    lastName = s.recv(BYTES).decode()
-                    email = s.recv(BYTES).decode()
+                    returned = s.recv(BYTES).decode()
+                    if returned == TRUE:
+                        firstName = s.recv(BYTES).decode()
+                        lastName = s.recv(BYTES).decode()
+                        email = s.recv(BYTES).decode()
+                        issue = s.recv(BYTES).decode()
 
-                    print("Engineer found:")
-                    print("\nFIRST NAME: " + firstName)
-                    print("LAST NAME: " + lastName)
-                    print("EMAIL: " + email + "\n")
+                        print("\nEngineer:")
+                        print("FIRST NAME: " + firstName)
+                        print("LAST NAME: " + lastName)
+                        print("EMAIL: " + email + "\n")
+
+                        print("Issue Resolved:")
+                        print(issue + "\n")
+
+                    else:
+                        print("Issue not found.\n")
                 else:
-                    print("Engineer not found.")
+                    print("Engineer not found.\n")
 
                 self.engineerMenu()
             else:
-                print("No QR code found")
+                print("No QR code found\n")
                 self.engineerMenu()
         if i == '3':
             exit()
         else:
-            print()
+            print("Incorrect input")
+            self.engineerMenu()
 
     def showMenu(self):
         """The menu displayed to the user following a successful login
         """
-        
-        lock_status = ""
+
         if self.locked:
             lock_status = "locked"
         else:
