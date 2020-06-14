@@ -18,9 +18,9 @@
 |customer|kalietta|password|
 
 ## Github and Trello Screenshots
-![repo](other/githubrepo.jpg)
-![cont](other/githubcont.jpg)
-![trello](other/trello.jpg)
+![repo](https://raw.githubusercontent.com/lukedavoli/PIoT_A2/master/other/githubrepo.JPG?token=ALW3ZT4DVZE5G6Y4TT2QWS2655CR4)
+![cont](https://raw.githubusercontent.com/lukedavoli/PIoT_A2/master/other/githubcont.JPG?token=ALW3ZT6SJKSAPEB7Z5OXMP2655CLI)
+![trello](https://raw.githubusercontent.com/lukedavoli/PIoT_A2/master/other/trello.JPG?token=ALW3ZTYTRF7BZT5SFHHL772655CSM)
 
 ## Contribution
 Michael: Updates to RESTful API and Flask site, new pages for different user roles
