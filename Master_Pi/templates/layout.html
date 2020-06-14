@@ -43,10 +43,6 @@
     {{ generate_navitems(Login="/login", Register="/register") }}
 {% endmacro %}
 
-{% macro logged_in_navbar() %}
-    {{ generate_navitems(Home="/", Cars="/cars", Bookings="/bookings", Logout="/logout") }}
-{% endmacro %}
-
 {% block navbar %}
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="#">pIoT</a>
@@ -56,7 +52,21 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             {% if current_user.is_authenticated %}
-                {{ logged_in_navbar() }}
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                {% if current_user.user_type == "customer" %}
+                    {{ generate_navitems(Cars="/cars", Bookings="/bookings") }}
+                {% elif current_user.user_type == "admin" %}
+                    {{ generate_navitems(Cars="/cars/all", Users="/users") }}
+                {% elif current_user.user_type == "manager" %}
+                    {{ generate_navitems(Data="/data") }}
+                {% elif current_user.user_type == "engineer" %}
+                    {{ generate_navitems(Issues="/issues") }}
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
             {% else %}
                 {{ logged_out_navbar() }}
             {% endif %}

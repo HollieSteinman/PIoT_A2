@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %} Edit User {{ user.user_id }} {% endblock %}
+
+{% block padded_content %}
+
+<h1>Edit Details for User {{ user.user_id }}</h1>
+
+<a href="/edit/user/{{ user.user_id }}"><button type="button" class="btn btn-dark">Reset Changes</button></a>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    {{ format_input(form.first_name) }}
+    {{ format_input(form.last_name) }}
+    {{ format_input(form.username) }}
+    {{ format_input(form.email) }}
+
+    <div>
+    {{ form.user_type.label }}<br>
+    {{ form.user_type }}
+    {{ format_errors(form.user_type.errors) }}<br>
+    </div>
+    <br>
+    <div>{{ form.submit(class="btn btn-dark") }}</div>
+</form>
+
+<br>
+
+{% with messages = get_flashed_messages(category_filter=["details_updated"]) %}
+  {% if messages %}
+
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

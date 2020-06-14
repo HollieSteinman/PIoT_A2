@@ -28,13 +28,14 @@
         {{ form.search_property }}
         {{ form.search }}
         {{ form.submit(class="btn btn-dark") }}
-        <a href="/cars"><button type="button" class="btn btn-dark">Clear</button></a>
+        <a href="/cars/all"><button type="button" class="btn btn-dark">Clear</button></a>
     </form>
 </div>
 
 <table class="table">
     <thead class="thead-light">
         <tr>
+            <th scope="col">ID</th>
             <th scope="col">Make</th>
             <th scope="col">Model</th>
             <th scope="col">Body Type</th>
@@ -42,12 +43,16 @@
             <th scope="col">Seats</th>
             <th scope="col">Location</th>
             <th scope="col">Price Per Hour</th>
+            <th scope="col">Status</th>
+            <th></th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        {% for car in available_cars %}
+        {% for car in cars %}
             <tr>
+                <td>{{ car.car_id }}</td>
                 <td>{{ car.make }}</td>
                 <td>{{ car.model }}</td>
                 <td>{{ car.body_type }}</td>
@@ -55,7 +60,10 @@
                 <td>{{ car.seats }}</td>
                 <td><a href="https://www.google.com/maps/search/?api=1&query={{ car.location }}"> {{ car.location }}</td>
                 <td>{{ "$%.2f" % car.cost_per_hour }}</td>
-                <td><a href="/booking/{{ car.car_id }}"><button type="button" class="btn btn-dark">Book Car</button></a></td>
+                <td>{{ car.status }}</td>
+                <td><a href="/car/{{ car.car_id }}/history"><button type="button" class="btn btn-dark">History</button></a></td>
+                <td><a href="/edit/car/{{ car.car_id }}"><button type="button" class="btn btn-dark">Edit</button></a></td>
+                <td><a href="/car/{{ car.car_id }}/issue"><button type="button" class="btn btn-dark">Report Issue</button></a></td>
             </tr>
         {% endfor%}
     </tbody>
