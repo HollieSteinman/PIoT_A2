@@ -45,3 +45,31 @@ def showMenu(input, locked):
         string += "Face Recognition"
 
     return string
+
+def engineerMenu(input, locked):
+    
+    if(input.isdigit()):
+        newInput = int(input)
+        if(newInput > 3 or newInput < 1):
+            raise ValueError("Please enter an input between 1 and 3")
+
+    else:
+        raise ValueError("Please enter a number")
+
+    string = ""
+
+    if locked:
+        lock_status = "locked"
+    else:
+        lock_status = "unlocked"
+
+    string += "Car is: " + lock_status + " 1. Unlock/Lock 2. Scan QR code 3. Exit "
+
+    if(newInput == 1):
+        string += unlock(locked)
+    if(newInput == 2):
+        string += "Recognising QR code..."
+    if(newInput == 3):
+        string += "exiting"
+
+    return string
