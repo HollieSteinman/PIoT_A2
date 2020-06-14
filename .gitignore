@@ -1,2 +1,5 @@
 .vscode/
 __pycache__/
+credentials.json
+token.json
+pushbullet_token.json
