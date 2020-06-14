@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+
+{% macro generate_booking_row(booking) %}
+<tr>
+    <td>{{ users[booking.user_id]["username"] }}</td>
+    <td>{{ users[booking.user_id]["first_name"] }}</td>
+    <td>{{ users[booking.user_id]["last_name"] }}</td>
+    <td>{{ users[booking.user_id]["email"] }}</td>
+    <td class="time">{{ booking.start_datetime }}</td>
+    <td class="time">{{ booking.end_datetime }}</td>
+    <td>{{ booking.status }}</td>
+</tr>
+{% endmacro %}
+
+{% block title %} Rental History for car {{ car.car_id }} {% endblock %}
+
+{% block padded_content %}
+
+<h1>Rental History</h1>
+
+<h2>Car Details</h2>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
+            <th scope="col">Body Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Seats</th>
+            <th scope="col">Price Per Hour</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>{{ car.car_id }}</td>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.body_type }}</td>
+                <td>{{ car.colour }}</td>
+                <td>{{ car.seats }}</td>
+                <td>${{ car.cost_per_hour }}</td>
+            </tr>
+    </tbody>
+</table>
+
+<h2>Bookings</h2>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Username</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Booking Start</th>
+            <th scope="col">Booking End</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+            {{ generate_booking_row(booking) }}
+        {% endfor%}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        function timeToString(value)
+        {
+            return value < 10 ? "0" + value : "" + value;
+        }
+
+        function formatDateTime(datetime)
+        {
+            tempdate = new Date(datetime);
+            year = tempdate.getFullYear();
+            month = timeToString(tempdate.getMonth() + 1);
+            day = timeToString(tempdate.getDate());
+            hours = timeToString(tempdate.getHours()%12 || 12);
+            minutes = timeToString(tempdate.getMinutes());
+            ampm = tempdate.getHours() < 12 ? "AM" : "PM"
+            return day+"/"+month+"/"+year+" at "+hours+":"+minutes+" "+ampm;
+        }
+
+        for (var timeclass of document.getElementsByClassName("time"))
+        {
+            timeclass.innerHTML = formatDateTime(timeclass.innerHTML);
+        }
+    </script>
+{% endblock %}

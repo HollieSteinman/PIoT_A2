@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %} Edit Car {{ car.car_id }} {% endblock %}
+
+{% block padded_content %}
+
+<h1>Edit Details for Car {{ car.car_id }}</h1>
+
+<a href="/edit/car/{{ car.car_id }}"><button type="button" class="btn btn-dark">Reset Changes</button></a>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    {{ format_input(form.make) }}
+    {{ format_input(form.model) }}
+    {{ format_input(form.body_type) }}
+    {{ format_input(form.colour) }}
+    {{ format_input(form.seats) }}
+    {{ format_input(form.cost_per_hour) }}
+    
+    <div>
+        {{ form.status.label }}<br>
+        {{ form.status }}
+        {{ format_errors(form.status.errors) }}<br>
+    </div>
+    <br>
+    <div>{{ form.submit(class="btn btn-dark") }}</div>
+</form>
+
+<br>
+
+{% with messages = get_flashed_messages(category_filter=["details_updated"]) %}
+  {% if messages %}
+
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}

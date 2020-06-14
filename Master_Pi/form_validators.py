@@ -8,8 +8,8 @@ def unique_username(form, field):
     :param field: the field to check for valid data in
     """
     # check if username does not exist in database
-    customer = requests.get("http://127.0.0.1:5000/api/customer/username/" + field.data).json()
-    if customer:
+    user = requests.get("http://127.0.0.1:5000/api/user/username/" + field.data).json()
+    if user:
         raise ValidationError("Username already taken")
 
 def valid_password(form, field):
@@ -22,8 +22,8 @@ def unique_email(form, field):
     :param form: the form the user enters details on
     :param field: the field to check for valid data in
     """
-    customer = requests.get("http://127.0.0.1:5000/api/customer/email/" + field.data).json()
-    if customer:
+    user = requests.get("http://127.0.0.1:5000/api/user/email/" + field.data).json()
+    if user:
         raise ValidationError("Eamil used by another account")
 
 def login_details_correct(form, field):
@@ -34,5 +34,17 @@ def login_details_correct(form, field):
     """
     if form.username.data and form.password.data:
         data = {"username":form.username.data, "password":form.password.data}
-        if not requests.post("http://127.0.0.1:5000/api/customer/verify", data=data).json():
+        if not requests.post("http://127.0.0.1:5000/api/user/verify", data=data).json():
             raise ValidationError("Username or Password incorrect")
+
+def valid_updated_username(form, field):
+    if form.user_id.data:
+        user = requests.get("http://127.0.0.1:5000/api/user/"+form.user_id.data).json()
+        if user["username"] != field.data:
+            unique_username(form, field)
+
+def valid_updated_email(form, field):
+    if form.user_id.data:
+        user = requests.get("http://127.0.0.1:5000/api/user/"+form.user_id.data).json()
+        if user["email"] != field.data:
+            unique_email(form, field)

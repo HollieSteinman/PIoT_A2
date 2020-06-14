@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block title %} Report Issue {{ car.car_id }} {% endblock %}
+
+{% block padded_content %}
+
+<h1>Reporting Issue for car {{ car.car_id }}</h1>
+
+<h2>Car Details</h2>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Make</th>
+            <th scope="col">Model</th>
+            <th scope="col">Body Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Seats</th>
+            <th scope="col">Price Per Hour</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td>{{ car.car_id }}</td>
+                <td>{{ car.make }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.body_type }}</td>
+                <td>{{ car.colour }}</td>
+                <td>{{ car.seats }}</td>
+                <td>${{ car.cost_per_hour }}</td>
+            </tr>
+    </tbody>
+</table>
+
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    {{ format_input(form.description) }}
+
+    <div>
+    {{ form.engineer_id.label }}<br>
+    {{ form.engineer_id }}
+    {{ format_errors(form.engineer_id.errors) }}<br>
+    </div>
+
+    <div>
+    {{ form.status.label }}<br>
+    {{ form.status }}
+    {{ format_errors(form.status.errors) }}<br>
+    </div>
+
+    <br>
+    <div>{{ form.submit(class="btn btn-dark") }}</div>
+</form>
+
+{% endblock %}
