@@ -184,6 +184,14 @@ def carHistory(car_id):
     bookings = requests.get("http://127.0.0.1:5000/api/car/{}/history".format(car_id)).json()
     return render_template("rental_history.html", car=car, bookings=bookings, users=users_as_dict())
 
+def format_new_issue_body(car_id, form):
+    issue_body = "Issue Details\n"
+    car = requests.get("http://127.0.0.1:5000/api/car/{}".format(car_id)).json()
+    issue_body += "car: " + car["make"] + " " + car["model"] + "\n"
+    issue_body += "description: " + form["description"] + "\n"
+    issue_body += "status: " + form["status"]
+    return issue_body
+
 @site.route("/car/<int:car_id>/issue", methods=["GET", "POST"])
 @login_required
 def reportIssue(car_id):
@@ -194,6 +202,7 @@ def reportIssue(car_id):
     if form.validate_on_submit():
         # update car and add a new issue to the table (api)
         requests.post("http://127.0.0.1:5000/api/issue", data=request.form)
+        send_notification_via_pushbullet("New Issue Assigned", format_new_issue_body(car_id, request.form))
         return redirect("/cars/all")
     form.fill_data(car_id, requests.get("http://127.0.0.1:5000/api/engineers").json())
     car = requests.get("http://127.0.0.1:5000/api/car/{}".format(car_id)).json()
