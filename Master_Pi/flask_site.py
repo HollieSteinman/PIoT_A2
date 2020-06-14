@@ -5,6 +5,7 @@ import os, requests, json
 from forms import LoginForm, RegisterForm, CarsSearchForm, EditUserForm, EditCarForm, ReportIssueForm, UsersSearchForm, AllCarsSearchForm
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_database import User
+from pushbullet_utils import send_notification_via_pushbullet
 
 site = Blueprint("site", __name__)
 
@@ -207,6 +208,13 @@ def reportIssue(car_id):
     form.fill_data(car_id, requests.get("http://127.0.0.1:5000/api/engineers").json())
     car = requests.get("http://127.0.0.1:5000/api/car/{}".format(car_id)).json()
     return render_template("issue.html", form=form, car=car)
+
+@site.route("/car/search", methods=["POST"])
+def findCar():
+    if request.form["car_id"]:
+        return redirect("/car/{}/history".format(request.form["car_id"]))
+    else:
+        return redirect("/cars/all")
 # End of Admin Pages
 
 # Engineer Pages
