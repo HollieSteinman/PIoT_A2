@@ -11,6 +11,8 @@ TRUE = '1'
 
 
 def bt_scan(s):
+    """Scan for nearby bluetooth devices
+    """
     # scan for nearby devices
     nearby_devices = bluetooth.discover_devices(lookup_names=False)
 

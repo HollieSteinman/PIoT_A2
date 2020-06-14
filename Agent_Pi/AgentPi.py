@@ -111,6 +111,8 @@ class AgentPi:
         self.showMenu()
 
     def engineerMenu(self):
+        """Display the menu for an engineer fixing a car
+        """
         if self.locked:
             lock_status = "locked"
         else:
