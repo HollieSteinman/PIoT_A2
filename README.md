@@ -1,4 +1,4 @@
-# PIoT Assignment 2 - Paul's Group 18 on Canvas
+# PIoT Assignment 2/3 - Paul's Group 18 on Canvas
 * Michael Sartorel (s3786267)
 * Hollie Steinman (s3784783)
 * Matthies Abera (s3779748)
@@ -22,7 +22,7 @@
 ![cont](https://raw.githubusercontent.com/lukedavoli/PIoT_A2/master/other/githubcont.JPG?token=ALW3ZT6SJKSAPEB7Z5OXMP2655CLI)
 ![trello](https://raw.githubusercontent.com/lukedavoli/PIoT_A2/master/other/trello.JPG?token=ALW3ZTYTRF7BZT5SFHHL772655CSM)
 
-## Contribution
+## Contribution for A3
 Michael: Updates to RESTful API and Flask site, new pages for different user roles
 
 Luke: re-designing cloud database and populating with data for manager analysis and integration with engineer functionality
