@@ -16,6 +16,8 @@ QUERY_IDENTIFIER = ["LOGIN", "MAC", "ENGDETAILS"]
 class CredCheck:
 
     def login(self, clientsocket, mycursor):
+        """Login to the system
+        """
         while True:
             username = clientsocket.recv(BYTES).decode()
             if username:
@@ -68,6 +70,8 @@ class CredCheck:
                 break
 
     def mac(self, clientsocket, mycursor):
+        """retrieve a mac address for the engineer
+        """
         while True:
             # retrieve MAC address
             mac = clientsocket.recv(BYTES).decode()
@@ -89,6 +93,8 @@ class CredCheck:
                 break
 
     def engDetails(self, clientsocket, mycursor, mydb):
+        """get the details for the assigned engineer
+        """
         while True:
             username = clientsocket.recv(BYTES).decode()
             if username:
@@ -146,6 +152,8 @@ class CredCheck:
                 break
 
     def handleType(self, clientsocket, mycursor, mydb):
+        """get the type of data requested
+        """
         while True:
             # find the type of data requested
             type = clientsocket.recv(BYTES).decode()
@@ -166,6 +174,8 @@ class CredCheck:
                     self.handleType(clientsocket, mycursor, mydb)
 
     def run(self):
+        """start credential checker
+        """
         mydb = mysql.connector.connect(
             host="35.197.185.32",
             user="root",
