@@ -1,0 +1,56 @@
+{
+    "manifest": {
+        "displayName": "Find car",
+        "invocationName": "Find car",
+        "category": "SEARCH"
+    },
+    "actions": [
+        {
+            "name": "com.piot.actions.Findcar",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "com.piot.intents.Findcar",
+                "parameters": [
+                    {
+                        "name": "number",
+                        "type": "SchemaOrg_Number"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "find car $SchemaOrg_Number:number",
+                        "search for car $SchemaOrg_Number:number",
+                        "get car $SchemaOrg_Number:number"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Finding car $number"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "com.piot.commands.Findcar",
+                                    "params": {
+                                        "number": "$number"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
